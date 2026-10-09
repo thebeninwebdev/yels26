@@ -1,69 +1,213 @@
-import Image from "next/image";
-
+﻿import { content, event, navigation } from "./event";
+import { HorizonArtwork, RibbonArtwork } from "./components/artwork";
+import { Countdown, FAQ } from "./components/interactive";
+import { Icon, RegistrationCTA, Wordmark } from "./components/ui";
+import { PageFrame } from "./components/page-frame";
+import { HeroSequence, HeroText, Reveal } from "./components/motion";
+import { DateMarquee } from "./components/date-marquee";
+import { Speakers, Agenda } from "./components/programme";
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+    <PageFrame>
+      <div id="top" tabIndex={-1}>
+        <main id="main" tabIndex={-1}>
+          <HeroSequence artwork={<RibbonArtwork />}>
+            <HeroText
+              eyebrow="YELS 2026 · BENIN CITY, EDO STATE"
+              heading={["YOUTH", "EMPOWERMENT &", "LEADERSHIP", "SUMMIT 2026"]}
+              subtitle={event.theme}
+              description={event.supportingTheme}
+              cta={<RegistrationCTA />}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </HeroSequence>
+          <DateMarquee />
+          <div className="event-context container">
+            <p>
+              <Icon name="calendar" />
+              {event.dateLabel} · {event.location}
+            </p>
+            <span>Main summit date, time and venue to be announced.</span>
+          </div>
+          <Countdown />
+          <section
+            id="about"
+            tabIndex={-1}
+            className="section about-section"
+            aria-labelledby="about-heading"
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <div className="container">
+              <Reveal className="section-heading centered">
+                <p className="section-label">ABOUT YELS 2026</p>
+                <h2 id="about-heading">
+                  A generation
+                  <br />
+                  <em>ready to lead.</em>
+                </h2>
+                <p className="intro-copy">{content.about}</p>
+              </Reveal>
+              <div className="benefit-grid">
+                {content.benefits.map((benefit, i) => (
+                  <Reveal key={benefit.title} delay={i * 0.08}>
+                    <article className={`benefit-panel benefit-${i}`}>
+                      <div className="benefit-top">
+                        <span>0{i + 1}</span>
+                        <Icon name={benefit.icon} />
+                      </div>
+                      <h3>
+                        {benefit.title}
+                        <span aria-hidden="true">.</span>
+                      </h3>
+                      <p>{benefit.text}</p>
+                      <div className="benefit-graphic" aria-hidden="true">
+                        <span />
+                        <span />
+                        <span />
+                      </div>
+                    </article>
+                  </Reveal>
+                ))}
+              </div>
+              <Reveal className="intro-art" kind="image">
+                <HorizonArtwork />
+                <p>
+                  Different perspectives.
+                  <br />
+                  <em>Shared possibilities.</em>
+                </p>
+                <span className="art-caption">
+                  YALI NETWORK EDO / YELS 2026
+                </span>
+              </Reveal>
+            </div>
+          </section>
+          <Speakers />
+          <Agenda />
+          <section
+            id="bootcamp"
+            tabIndex={-1}
+            className="bootcamp-section section"
+            aria-labelledby="bootcamp-heading"
+          >
+            <HorizonArtwork variant="bootcamp" />
+            <div className="container">
+              <Reveal className="bootcamp-content">
+                <p className="section-label">PART OF YELS 2026</p>
+                <h2 id="bootcamp-heading">
+                  Learn
+                  <br />
+                  by doing.
+                </h2>
+                <h3>Physical Bootcamp</h3>
+                <div className="bootcamp-details">
+                  <p>
+                    <Icon name="calendar" />
+                    {event.bootcamp.dates}
+                  </p>
+                  <p>
+                    <Icon name="clock" />
+                    {event.bootcamp.time}
+                  </p>
+                </div>
+                <p className="small-copy">Participation details coming soon.</p>
+                <p className="bootcamp-manifesto">
+                  PRACTICAL SKILLS / REAL CONNECTIONS / BIGGER OPPORTUNITIES
+                </p>
+              </Reveal>
+            </div>
+          </section>
+          <section
+            id="registration"
+            tabIndex={-1}
+            className="section closing-section"
+            aria-labelledby="closing-heading"
+          >
+            <div className="container">
+              <Reveal className="section-heading centered">
+                <p className="section-label">TAKE THE NEXT STEP</p>
+                <h2 id="closing-heading">
+                  Your future starts
+                  <br />
+                  <em>with a step.</em>
+                </h2>
+                <p className="intro-copy">{content.closing}</p>
+                <div className="closing-cta">
+                  <RegistrationCTA />
+                </div>
+              </Reveal>
+              <div className="how-it-works">
+                <p className="journey-note">
+                  THE PLANNED ATTENDEE EXPERIENCE · ONCE REGISTRATION OPENS
+                </p>
+                <ol>
+                  <li>
+                    <Icon name="document" />
+                    <div>
+                      <h3>Register</h3>
+                      <p>Fill in a short form to secure your spot.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <Icon name="qr" />
+                    <div>
+                      <h3>Receive your QR ticket</h3>
+                      <p>Get your unique ticket via email.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <Icon name="check" />
+                    <div>
+                      <h3>Check in</h3>
+                      <p>Present your QR code at the venue.</p>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </section>
+          <section
+            id="faq"
+            tabIndex={-1}
+            className="section faq-section"
+            aria-labelledby="faq-heading"
+          >
+            <div className="container faq-layout">
+              <Reveal>
+                <p className="section-label">A LITTLE MORE CLARITY</p>
+                <h2 id="faq-heading">
+                  Good questions.
+                  <br />
+                  <em>Clear answers.</em>
+                </h2>
+                <p className="section-copy">
+                  The essentials for your YELS 2026 experience. More details are
+                  on the way.
+                </p>
+              </Reveal>
+              <FAQ />
+            </div>
+          </section>
+        </main>
+        <footer className="site-footer">
+          <div className="container">
+            <div className="footer-top">
+              <a href="#top" aria-label="YALI Network Edo — back to top">
+                <Wordmark />
+              </a>
+              <nav aria-label="Footer navigation">
+                {navigation.map((item) => (
+                  <a href={item.href} key={item.href}>
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+            </div>
+            <div className="footer-bottom">
+              <p>YOUTH EMPOWERMENT & LEADERSHIP SUMMIT</p>
+              <p>BENIN CITY, EDO STATE · 2026</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </PageFrame>
   );
 }
