@@ -1,5 +1,6 @@
 ﻿"use client";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
+import { usePathname } from "next/navigation";
 import {
   useCallback,
   useEffect,
@@ -11,6 +12,7 @@ import { navigation } from "../event";
 import { RegistrationCTA, Wordmark } from "./ui";
 import { ease, useMotionPreference } from "./motion";
 export function PageFrame({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [footerVisible, setFooterVisible] = useState(false);
@@ -125,7 +127,7 @@ export function PageFrame({ children }: { children: ReactNode }) {
           </a>
           <nav className="desktop-nav" aria-label="Main navigation">
             {navigation.map((item) => (
-              <a key={item.href} href={item.href}>
+              <a key={item.href} href={pathname === "/" ? item.href : `/${item.href}`}>
                 {item.label}
               </a>
             ))}
@@ -198,13 +200,14 @@ export function PageFrame({ children }: { children: ReactNode }) {
               {navigation.map((item, i) => (
                 <motion.a
                   key={item.href}
-                  href={item.href}
+                  href={pathname === "/" ? item.href : `/${item.href}`}
                   variants={{
                     closed: { opacity: 0, x: -18 },
                     open: { opacity: 1, x: 0 },
                   }}
                   transition={{ duration: reduced ? 0 : 0.35 }}
                   onClick={(e) => {
+                    if (pathname !== "/") return;
                     e.preventDefault();
                     pendingAnchor.current = item.href;
                     close();

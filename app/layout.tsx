@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "YELS 2026 | Shaping the Future of Work · YALI Network Edo",
   description:
-    "Youth Empowerment and Leadership Summit 2026 by YALI Network Edo. Benin City, Edo State, December 2026. Exact summit date and registration details coming soon.",
+    "Youth Empowerment and Leadership Summit 2026 by YALI Network Edo. Benin City, Edo State, 5 December 2026.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

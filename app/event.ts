@@ -8,7 +8,7 @@
   dateLabel: "5 December 2026",
   startsAt: "2026-12-05T00:00:00+01:00",
   endsAt: "2026-12-06T00:00:00+01:00",
-  registrationUrl: null as string | null,
+  registrationUrl: "/register",
   bootcamp: { dates: "8–9 December 2026", time: "9:00 AM–3:00 PM" },
 };
 export const navigation = [
@@ -75,7 +75,7 @@ export const content = {
     {
       question: "How will registration work?",
       answer:
-        "Registration details are awaiting announcement. The planned attendee experience is to register, receive a QR ticket by email and present it at check-in. Registration is not open on this website yet.",
+        "Register here to reserve your place at YELS 2026. Your registration is confirmed once you receive your registration ID. QR tickets and check-in details will be shared closer to the summit.",
     },
   ],
 };

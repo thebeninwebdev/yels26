@@ -380,8 +380,10 @@ h3 {
 }
 .marquee-section {
   overflow: clip;
-  padding-block: clamp(85px, 8vw, 155px) 40px;
   position: relative;
+  z-index: 2;
+  margin-top: clamp(-112px, -7vw, -72px);
+  padding-block: clamp(48px, 5vw, 88px) 40px;
 }
 .marquee-tilt {
   transform: rotate(-6deg);
@@ -1645,7 +1647,8 @@ h3 {
     font-size: 7px;
   }
   .marquee-section {
-    padding-top: 50px;
+    margin-top: -22px;
+    padding-top: 36px;
     padding-bottom: 20px;
   }
   .date-ticket {
@@ -2226,3 +2229,4 @@ h3 {
     margin: 0;
   }
 }
+

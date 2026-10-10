@@ -136,7 +136,7 @@ export default function Home() {
               </Reveal>
               <div className="how-it-works">
                 <p className="journey-note">
-                  THE PLANNED ATTENDEE EXPERIENCE · ONCE REGISTRATION OPENS
+                  YOUR YELS 2026 ATTENDEE EXPERIENCE
                 </p>
                 <ol>
                   <li>
