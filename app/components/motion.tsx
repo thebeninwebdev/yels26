@@ -81,10 +81,9 @@ export function HeroSequence({
       initial={false}
       animate={controls}
     >
-      <div className="container hero-layout">
-        {children}
         <motion.div
           className="hero-artwork"
+          aria-hidden="true"
           variants={{
             enter: {
               opacity: [0, 1],
@@ -108,10 +107,9 @@ export function HeroSequence({
           >
             {artwork}
           </motion.div>
-          <span className="artwork-caption">
-            A NEW GENERATION. A NEW POSSIBILITY.
-          </span>
         </motion.div>
+      <div className="container hero-layout">
+        {children}
       </div>
     </motion.section>
   );

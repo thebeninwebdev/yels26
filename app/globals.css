@@ -205,19 +205,20 @@ h3 {
 }
 .hero {
   position: relative;
+  isolation: isolate;
   overflow: clip;
   padding: 88px 0 70px;
 }
 .hero-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   min-height: 650px;
 }
 .hero-copy {
   position: relative;
   z-index: 2;
+  max-width: 720px;
 }
 .hero .eyebrow {
   margin-bottom: 30px;
@@ -253,18 +254,29 @@ h3 {
 .hero-actions {
   margin-top: 30px;
 }
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(90deg, #060c16ed, #060c1699 48%, #060c1626),
+    linear-gradient(0deg, #060c16, transparent 25%);
+}
 .hero-artwork {
-  position: relative;
-  align-self: stretch;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  min-width: 0;
-  background: radial-gradient(ellipse, #04365a77, transparent 68%);
+  background: radial-gradient(ellipse at 70% 45%, #04365a99, transparent 75%);
 }
 .hero-artwork > div {
-  width: 120%;
-  margin-left: -10%;
+  width: max(100vw, 1000px);
+  flex-shrink: 0;
+  margin-left: 25%;
 }
 .ribbon-art {
   width: 100%;
@@ -1321,7 +1333,6 @@ h3 {
   }
   .hero-layout {
     min-height: 600px;
-    grid-template-columns: 1.25fr 1fr;
   }
   .hero h1 {
     font-size: clamp(40px, 4.5vw, 58px);
@@ -1401,15 +1412,10 @@ h3 {
   }
   .hero-layout {
     min-height: 600px;
-    grid-template-columns: 1.4fr 1fr;
     gap: 0;
   }
   .hero h1 {
     font-size: clamp(37px, 4.7vw, 48px);
-  }
-  .hero-artwork > div {
-    width: 150%;
-    margin-left: -25%;
   }
   .hero-theme {
     font-size: 24px;
@@ -1549,7 +1555,7 @@ h3 {
   }
   .hero {
     padding-top: 45px;
-    padding-bottom: 0;
+    padding-bottom: 60px;
   }
   .hero-layout {
     display: flex;
@@ -1589,20 +1595,15 @@ h3 {
     gap: 20px;
   }
   .hero-artwork {
-    min-height: 300px;
-    height: clamp(300px, 75vw, 420px);
-    margin: 5px -20px 0;
-    align-self: auto;
     overflow: hidden;
   }
   .hero-artwork > div {
-    width: 370px;
-    max-width: 110%;
-    position: absolute;
-    right: -15px;
-    margin: 0;
-    top: -20px;
-    opacity: 0.85;
+    width: max(170vw, 760px);
+    margin-left: 45%;
+  }
+  .hero::after {
+    background: linear-gradient(90deg, #060c16d9, #060c1680),
+      linear-gradient(0deg, #060c16, transparent 30%);
   }
   .artwork-caption {
     bottom: 12px;
