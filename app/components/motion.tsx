@@ -61,6 +61,24 @@ export function Reveal({
     </motion.div>
   );
 }
+type HeroTiming = { delay: number; duration: number; distance?: number | string };
+const heroReveal: Variants = {
+  hidden: ({ distance = 12 }: HeroTiming) => ({ opacity: 0, y: distance }),
+  visible: ({ delay, duration }: HeroTiming) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay, duration, ease },
+  }),
+};
+const heroArtwork: Variants = {
+  hidden: { opacity: 0, y: 20, scale: 1.03 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { delay: 1.05, duration: 0.95, ease },
+  },
+};
 export function HeroSequence({
   artwork,
   children,
@@ -71,45 +89,48 @@ export function HeroSequence({
   const controls = useAnimationControls();
   const reduced = useMotionPreference();
   useEffect(() => {
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      void controls.start("enter");
+    // Read the actual preference before starting the hydration-safe timeline.
+    if (readMotionPreference()) controls.set("visible");
+    else void controls.start("visible");
   }, [controls]);
+  useEffect(() => {
+    // Changing the preference can stop motion, but never replays the entrance.
+    if (reduced) controls.set("visible");
+  }, [controls, reduced]);
   return (
     <motion.section
       className="hero"
       aria-labelledby="hero-heading"
-      initial={false}
+      initial="hidden"
       animate={controls}
     >
-        <motion.div
-          className="hero-artwork"
-          aria-hidden="true"
-          variants={{
-            enter: {
-              opacity: [0, 1],
-              scale: [1.04, 1],
-              transition: { delay: 1.65, duration: 1, ease },
-            },
-          }}
-        >
+      <noscript>
+        <style>{`
+          .hero .hero-reveal, .hero .hero-artwork-ambient {
+            opacity: 1 !important;
+            transform: none !important;
+          }
+        `}</style>
+      </noscript>
+      <div className="container hero-layout">{children}</div>
+      <div className="hero-artwork" aria-hidden="true">
+        <motion.div className="hero-artwork-entrance hero-reveal" variants={heroArtwork}>
           <motion.div
+            className="hero-artwork-ambient"
             animate={
               reduced
                 ? { y: 0, rotate: 0 }
-                : { y: [0, -10, 0], rotate: [-1, 1, -1] }
+                : { y: [0, -10, 0], rotate: [0, 1, 0] }
             }
-            transition={{
-              duration: 12,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2.2,
-            }}
+            transition={
+              reduced
+                ? { duration: 0 }
+                : { duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2.05 }
+            }
           >
             {artwork}
           </motion.div>
         </motion.div>
-      <div className="container hero-layout">
-        {children}
       </div>
     </motion.section>
   );
@@ -122,42 +143,72 @@ export function HeroText({
   cta,
 }: {
   eyebrow: string;
-  heading: string[];
+  heading: [string, string, string];
   subtitle: string;
   description: string;
   cta: ReactNode;
 }) {
   return (
     <div className="hero-copy">
-      <motion.p className="eyebrow" variants={textReveal} custom={0.08}>
-        {eyebrow}
-      </motion.p>
-      <motion.h1 id="hero-heading" variants={stagger}>
-        {heading.map((line, i) => (
-          <motion.span key={line} variants={textReveal} custom={0.16 + i * 0.1}>
-            {line === "SUMMIT 2026" ? (
-              <>
-                SUMMIT <em>2026</em>
-              </>
-            ) : (
-              line
-            )}
-          </motion.span>
-        ))}
-      </motion.h1>
-      <motion.h2 className="hero-theme" variants={textReveal} custom={0.65}>
-        {subtitle}
-      </motion.h2>
       <motion.p
-        className="hero-description"
-        variants={textReveal}
-        custom={0.76}
+        className="eyebrow hero-location hero-reveal"
+        variants={heroReveal}
+        custom={{ delay: 0.08, duration: 0.45 }}
       >
-        {description}
+        <svg className="hero-location-pin" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path fillRule="evenodd" d="M12 2a8 8 0 0 0-8 8c0 5.5 8 12 8 12s8-6.5 8-12a8 8 0 0 0-8-8Zm0 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
+        </svg>
+        <span>{eyebrow}</span>
       </motion.p>
-      <motion.div className="hero-actions" variants={textReveal} custom={0.87}>
-        {cta}
-      </motion.div>
+      <div className="hero-text-row">
+        <h1 id="hero-heading">
+          {heading.map((line, i) => (
+            <span className="hero-line-mask" key={line}>
+              <motion.span
+                className="hero-line hero-reveal"
+                variants={heroReveal}
+                custom={{ delay: 0.18 + i * 0.1, duration: 0.7, distance: "105%" }}
+              >
+                {i === 0 ? (
+                  <>
+                    <span className="hero-first-word">{line.split(" ")[0]}{" "}</span>
+                    {line.slice(line.indexOf(" ") + 1)}
+                  </>
+                ) : i === 2 ? (
+                  <>
+                    <span className="hero-dash" aria-hidden="true">&mdash; </span>
+                    {line.slice(0, -4)}<em>2026</em>
+                  </>
+                ) : line}
+                {" "}
+              </motion.span>
+            </span>
+          ))}
+        </h1>
+        <div className="hero-support">
+          <motion.h2
+            className="hero-theme hero-reveal"
+            variants={heroReveal}
+            custom={{ delay: 0.55, duration: 0.55 }}
+          >
+            {subtitle}
+          </motion.h2>
+          <motion.p
+            className="hero-description hero-reveal"
+            variants={heroReveal}
+            custom={{ delay: 0.65, duration: 0.55 }}
+          >
+            {description}
+          </motion.p>
+          <motion.div
+            className="hero-actions hero-reveal"
+            variants={heroReveal}
+            custom={{ delay: 0.75, duration: 0.55 }}
+          >
+            {cta}
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }

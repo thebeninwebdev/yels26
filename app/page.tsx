@@ -13,8 +13,8 @@ export default function Home() {
         <main id="main" tabIndex={-1}>
           <HeroSequence artwork={<RibbonArtwork />}>
             <HeroText
-              eyebrow="YELS 2026 · BENIN CITY, EDO STATE"
-              heading={["YOUTH", "EMPOWERMENT &", "LEADERSHIP", "SUMMIT 2026"]}
+              eyebrow="BENIN CITY, EDO STATE"
+              heading={["Youth Empowerment", "& Leadership", "Summit 2026"]}
               subtitle={event.theme}
               description={event.supportingTheme}
               cta={<RegistrationCTA />}

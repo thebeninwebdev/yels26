@@ -250,7 +250,7 @@ export function PageFrame({ children }: { children: ReactNode }) {
         animate={{
           x: open ? "min(82vw, 380px)" : "0px",
           scale: open ? 0.97 : 1,
-          borderRadius: open ? "24px" : "0px",
+          borderRadius: 0,
         }}
         transition={{ duration: reduced ? 0 : 0.5, ease }}
         style={{ transformOrigin: "left top" }}
