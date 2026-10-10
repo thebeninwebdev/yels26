@@ -334,6 +334,7 @@ h3 {
 .hero-artwork-entrance {
   width: max(100%, 900px);
   flex-shrink: 0;
+  filter: brightness(0.19);
 }
 .ribbon-art {
   width: 100%;

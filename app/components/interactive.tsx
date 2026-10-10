@@ -6,7 +6,9 @@ export function Countdown() {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
     if (!event.startsAt || !event.endsAt) return;
-    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    const updateNow = () => setNow(Date.now());
+    updateNow();
+    const timer = window.setInterval(updateNow, 1000);
     return () => window.clearInterval(timer);
   }, []);
   const { state, values } = getCountdown(now, event.startsAt, event.endsAt);

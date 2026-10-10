@@ -227,7 +227,7 @@ export function PageFrame({ children }: { children: ReactNode }) {
             <p className="panel-note">
               Benin City, Edo State
               <br />
-              December 2026 · Summit date TBA
+              5 December 2026 · Summit time TBA
             </p>
           </motion.div>
         )}

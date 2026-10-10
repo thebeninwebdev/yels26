@@ -5,10 +5,9 @@
   supportingTheme:
     "Empowering Youth Innovation and Leadership for Economic Growth",
   location: "Benin City, Edo State",
-  dateLabel: "December 2026",
-  // Set both confirmed ISO timestamps with Z or an explicit timezone offset.
-  startsAt: null as string | null,
-  endsAt: null as string | null,
+  dateLabel: "5 December 2026",
+  startsAt: "2026-12-05T00:00:00+01:00",
+  endsAt: "2026-12-06T00:00:00+01:00",
   registrationUrl: null as string | null,
   bootcamp: { dates: "8–9 December 2026", time: "9:00 AM–3:00 PM" },
 };
@@ -62,7 +61,7 @@ export const content = {
     },
     {
       question: "When and where will it take place?",
-      answer: `The main summit is planned for ${event.dateLabel} in ${event.location}. The exact date, time and venue are awaiting announcement.`,
+      answer: `The main summit takes place on ${event.dateLabel} in ${event.location}. The time and venue are awaiting announcement.`,
     },
     {
       question: "Will there be a physical bootcamp?",
