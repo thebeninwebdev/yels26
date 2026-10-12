@@ -33,10 +33,15 @@ function Field({ label, error, hint, children }: { label: string; error?: string
   return <label className="registration-field"><span>{label}</span>{hint && <small>{hint}</small>}{children}{error && <em className="form-error" role="alert">{error}</em>}</label>;
 }
 
+function TicketQr({ dataUrl }: { dataUrl?: string }) {
+  if (!dataUrl) return null;
+  return <div className="registration-qr-fallback"><img src={dataUrl} alt="Your YELS 2026 entry QR code" /><p>Present this QR code at the entrance.</p><a className="registration-qr-download" href={dataUrl} download="yels26-entry-qr.png">Download QR code</a></div>;
+}
+
 export function RegistrationForm() {
   const [step, setStep] = useState(0);
   const [serverError, setServerError] = useState("");
-  const [success, setSuccess] = useState<{ fullName: string; registrationId: string; bootcampApplied: boolean } | null>(null);
+  const [success, setSuccess] = useState<{ fullName: string; registrationId: string; bootcampApplied: boolean; ticketEmailSent: boolean; qrCodeDataUrl?: string } | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const reduced = useMotionPreference();
   const { control, register, setValue, trigger, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<RegistrationValues>({
@@ -68,10 +73,10 @@ export function RegistrationForm() {
   const radio = (name: keyof RegistrationValues) => ({ value: values[name] as string | undefined, onChange: (value: string) => setValue(name, value as never, { shouldValidate: true }) });
   const stepMotion = { initial: { opacity: 0, y: reduced ? 0 : 14 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: reduced ? 0 : -10 }, transition: { duration: reduced ? 0 : 0.32, ease } };
 
-  if (success) return <section className="registration-success" aria-live="polite"><p className="section-label">REGISTRATION COMPLETE</p><h1>You&apos;re registered<br /><em>for YELS 2026.</em></h1><p>Thank you, {success.fullName}. Your summit registration has been confirmed.</p><div className="registration-id"><span>YOUR REGISTRATION ID</span><strong>{success.registrationId}</strong></div>{success.bootcampApplied && <p className="registration-bootcamp-note">Your Bootcamp application has been received and is currently under review.</p>}<Link className="registration" href="/">Back to YELS 2026 <span aria-hidden="true">↗</span></Link></section>;
+  if (success) return <section className="registration-success" aria-live="polite"><p className="section-label">REGISTRATION COMPLETE</p><h1>You&apos;re registered<br /><em>for YELS 2026.</em></h1><p>Thank you, {success.fullName}. Your summit registration has been confirmed.</p>{success.ticketEmailSent ? <p>Your YELS 2026 ticket has been sent to {values.email}. Keep it safe and present the QR code at the entrance.</p> : <p className="registration-email-warning">You&apos;re registered. Your ticket email is delayed, but your QR code is ready to use.</p>}<TicketQr dataUrl={success.qrCodeDataUrl} />{success.bootcampApplied && <p className="registration-bootcamp-note">Your Bootcamp application has been received and is currently under review.</p>}<Link className="registration" href="/">Back to YELS 2026 <span aria-hidden="true">↗</span></Link></section>;
 
   return <form className="registration-form" noValidate onSubmit={handleSubmit(submit, () => document.querySelector<HTMLElement>(".form-error")?.scrollIntoView({ behavior: "smooth", block: "center" }))}>
-    <ol className="registration-progress" aria-label="Registration progress">{steps.map((label, index) => <li key={label} className={index === step ? "is-current" : index < step ? "is-complete" : ""}><span>0{index + 1}</span><b>{label}</b></li>)}</ol>
+    <header className="registration-header"><Link href="/" className="registration-home"><span aria-hidden="true">←</span> YELS 2026 Registration</Link><ol className="registration-progress" aria-label={`Registration progress: step ${step + 1} of 5`}>{steps.map((label, index) => <li key={label} aria-current={index === step ? "step" : undefined} aria-label={`${label}, ${index < step ? "complete" : index === step ? "current" : "upcoming"}`} className={index === step ? "is-current" : index < step ? "is-complete" : ""} />)}</ol><p className="registration-step-count">Step {step + 1} of 5</p></header>
     <AnimatePresence mode="wait" initial={false}><motion.section key={step} {...stepMotion} className="registration-step" aria-labelledby="registration-heading">
       <p className="eyebrow">STEP 0{step + 1} / 05</p>
       {step === 0 && <><h1 id="registration-heading" tabIndex={-1} ref={heading}>Start with <em>you.</em></h1><p className="registration-intro">A few essentials to reserve your place at YELS 2026.</p><div className="registration-grid"><Field label="Full name" error={errors.fullName?.message}><input autoComplete="name" {...register("fullName")} /></Field><Field label="Email address" error={errors.email?.message}><input type="email" autoComplete="email" {...register("email")} /></Field><Field label="WhatsApp phone number" error={errors.phone?.message}><input type="tel" autoComplete="tel" {...register("phone")} /></Field></div><fieldset><legend>Age range</legend><ChoiceGrid name="age range" options={optionSets.ageRange} error={errors.ageRange?.message} {...radio("ageRange")} /></fieldset><fieldset><legend>Gender</legend><ChoiceGrid name="gender" options={optionSets.gender} error={errors.gender?.message} {...radio("gender")} /></fieldset></>}

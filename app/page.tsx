@@ -11,7 +11,7 @@ export default function Home() {
     <PageFrame>
       <div id="top" tabIndex={-1}>
         <main id="main" tabIndex={-1}>
-          <HeroSequence artwork={<RibbonArtwork />}>
+          <HeroSequence introTitle="YELS 26" artwork={<RibbonArtwork />}>
             <HeroText
               eyebrow="BENIN CITY, EDO STATE"
               heading={["Youth Empowerment", "& Leadership", "Summit 2026"]}

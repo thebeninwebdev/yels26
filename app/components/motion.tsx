@@ -1,6 +1,6 @@
 ﻿"use client";
-import { motion, useAnimationControls, type Variants } from "framer-motion";
-import { useEffect, useSyncExternalStore, type ReactNode } from "react";
+import { AnimatePresence, motion, useAnimationControls, type Variants } from "framer-motion";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 const subscribeMotionPreference = (notify: () => void) => {
   const media = window.matchMedia("(prefers-reduced-motion: reduce)");
   media.addEventListener("change", notify);
@@ -76,36 +76,67 @@ const heroArtwork: Variants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { delay: 1.05, duration: 0.95, ease },
+    transition: { delay: 0.28, duration: 0.8, ease },
   },
 };
 export function HeroSequence({
   artwork,
   children,
+  introTitle,
 }: {
   artwork: ReactNode;
   children: ReactNode;
+  introTitle?: string;
 }) {
   const controls = useAnimationControls();
   const reduced = useMotionPreference();
+  const [introVisible, setIntroVisible] = useState(Boolean(introTitle));
+  const previousOverflow = useRef("");
+
   useEffect(() => {
-    // Read the actual preference before starting the hydration-safe timeline.
-    if (readMotionPreference()) controls.set("visible");
-    else void controls.start("visible");
-  }, [controls]);
+    // One homepage-only timeline: title rise (0.10s), hold, curtain exit (1.35s), hero (1.45s).
+    if (!introTitle || readMotionPreference()) {
+      controls.set("visible");
+      return;
+    }
+
+    previousOverflow.current = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const exitIntro = window.setTimeout(() => setIntroVisible(false), 1350);
+    const revealHero = window.setTimeout(() => void controls.start("visible"), 1450);
+
+    return () => {
+      window.clearTimeout(exitIntro);
+      window.clearTimeout(revealHero);
+      document.body.style.overflow = previousOverflow.current;
+    };
+  }, [controls, introTitle]);
+
   useEffect(() => {
-    // Changing the preference can stop motion, but never replays the entrance.
-    if (reduced) controls.set("visible");
+    // A changed accessibility preference never replays the entrance.
+    if (reduced) {
+      controls.set("visible");
+    }
   }, [controls, reduced]);
+
   return (
-    <motion.section
-      className="hero"
-      aria-labelledby="hero-heading"
-      initial="hidden"
-      animate={controls}
-    >
+    <>
+      <AnimatePresence onExitComplete={() => { document.body.style.overflow = previousOverflow.current; }}>
+        {introTitle && introVisible && !reduced && (
+          <motion.div className="yels-intro" initial={{ y: 0 }} animate={{ y: 0 }} exit={{ y: "-100%" }} transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}>
+            <motion.div className="yels-intro-inner" exit={{ y: -52, scale: 1.02 }} transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}>
+              <h1 className="yels-intro-title" aria-label={introTitle}>
+                <span className="yels-intro-mask"><motion.span className="yels-intro-word" initial={{ opacity: 0, y: "105%" }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.84, delay: 0.1, ease }}>YELS</motion.span></span>
+                <span className="yels-intro-mask"><motion.span className="yels-intro-year" initial={{ opacity: 0, y: "105%" }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.84, delay: 0.18, ease }}>26</motion.span></span>
+              </h1>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <motion.section className="hero" aria-labelledby="hero-heading" initial="hidden" animate={controls}>
       <noscript>
         <style>{`
+          .yels-intro { display: none !important; }
           .hero .hero-reveal, .hero .hero-artwork-ambient {
             opacity: 1 !important;
             transform: none !important;
@@ -132,7 +163,8 @@ export function HeroSequence({
           </motion.div>
         </motion.div>
       </div>
-    </motion.section>
+      </motion.section>
+    </>
   );
 }
 export function HeroText({
@@ -153,7 +185,7 @@ export function HeroText({
       <motion.p
         className="eyebrow hero-location hero-reveal"
         variants={heroReveal}
-        custom={{ delay: 0.08, duration: 0.45 }}
+        custom={{ delay: 0.05, duration: 0.42 }}
       >
         <svg className="hero-location-pin" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path fillRule="evenodd" d="M12 2a8 8 0 0 0-8 8c0 5.5 8 12 8 12s8-6.5 8-12a8 8 0 0 0-8-8Zm0 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
@@ -167,7 +199,7 @@ export function HeroText({
               <motion.span
                 className="hero-line hero-reveal"
                 variants={heroReveal}
-                custom={{ delay: 0.18 + i * 0.1, duration: 0.7, distance: "105%" }}
+                custom={{ delay: 0.12 + i * 0.1, duration: 0.62, distance: "105%" }}
               >
                 {i === 0 ? (
                   <>
@@ -189,21 +221,21 @@ export function HeroText({
           <motion.h2
             className="hero-theme hero-reveal"
             variants={heroReveal}
-            custom={{ delay: 0.55, duration: 0.55 }}
+            custom={{ delay: 0.4, duration: 0.5 }}
           >
             {subtitle}
           </motion.h2>
           <motion.p
             className="hero-description hero-reveal"
             variants={heroReveal}
-            custom={{ delay: 0.65, duration: 0.55 }}
+            custom={{ delay: 0.5, duration: 0.5 }}
           >
             {description}
           </motion.p>
           <motion.div
             className="hero-actions hero-reveal"
             variants={heroReveal}
-            custom={{ delay: 0.75, duration: 0.55 }}
+            custom={{ delay: 0.65, duration: 0.5 }}
           >
             {cta}
           </motion.div>

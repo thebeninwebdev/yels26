@@ -27,6 +27,16 @@ const attendeeSchema = new Schema(
     bootcampStatus: { type: String, enum: ["not_applied", "pending", "approved", "rejected", "waitlisted"], required: true },
     consent: { type: Boolean, required: true }, consentedAt: { type: Date, default: Date.now },
     marketingConsent: { type: Boolean, default: false }, registrationId: { type: String, required: true, unique: true },
+    ticketEmail: {
+      status: { type: String, enum: ["pending", "sent", "failed"], default: "pending" },
+      sentAt: Date,
+      resendEmailId: String,
+      lastError: String,
+    },
+    checkIn: {
+      status: { type: String, enum: ["not_checked_in", "checked_in"], default: "not_checked_in" },
+      checkedInAt: Date,
+    },
   },
   { timestamps: true },
 );

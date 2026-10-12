@@ -1,4 +1,3 @@
-import { PageFrame } from "../components/page-frame";
 import { RegistrationForm } from "./registration-form";
 import "./registration.css";
 
@@ -9,16 +8,10 @@ export const metadata = {
 
 export default function RegisterPage() {
   return (
-    <PageFrame>
-      <main id="main" className="registration-page" tabIndex={-1}>
-        <div className="registration-shell container">
-          <div className="registration-heading">
-            <p className="eyebrow">YOUTH EMPOWERMENT &amp; LEADERSHIP SUMMIT</p>
-            <p>BENIN CITY, EDO STATE · 5 DECEMBER 2026</p>
-          </div>
-          <RegistrationForm />
-        </div>
-      </main>
-    </PageFrame>
+    <main id="main" className="registration-page" tabIndex={-1}>
+      <div className="registration-shell">
+        <RegistrationForm />
+      </div>
+    </main>
   );
 }

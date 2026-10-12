@@ -209,6 +209,49 @@ h3 {
   overflow: clip;
   padding: clamp(80px, 8vw, 152px) 0 clamp(64px, 7vw, 120px);
 }
+.yels-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #060c16;
+  will-change: transform;
+}
+.yels-intro-inner {
+  will-change: transform;
+}
+.yels-intro-title {
+  display: flex;
+  align-items: baseline;
+  gap: .1em;
+  margin: 0;
+  color: var(--foreground);
+  font-size: clamp(6rem, 18vw, 15rem);
+  font-weight: 800;
+  letter-spacing: -.06em;
+  line-height: .88;
+  white-space: nowrap;
+}
+.yels-intro-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: .08em;
+  margin-bottom: -.08em;
+}
+.yels-intro-word,
+.yels-intro-year {
+  display: block;
+  will-change: transform, opacity;
+}
+.yels-intro-year {
+  color: var(--blue);
+}
+body:has(.yels-intro) .site-header,
+body:has(.yels-intro) .menu-toggle {
+  visibility: hidden;
+}
 .hero-layout {
   position: relative;
   z-index: 1;
@@ -1589,6 +1632,9 @@ h3 {
   }
 }
 @media (max-width: 699px) {
+  .yels-intro-title {
+    font-size: clamp(4rem, 21vw, 8rem);
+  }
   .container {
     width: calc(100% - 40px);
   }
@@ -2113,6 +2159,9 @@ h3 {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .yels-intro {
+    display: none !important;
+  }
   html {
     scroll-behavior: auto;
   }
