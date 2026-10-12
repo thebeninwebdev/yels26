@@ -19,7 +19,7 @@ function useCompactViewport() {
   const [compact, setCompact] = useState(false);
 
   useEffect(() => {
-    const query = window.matchMedia("(max-width: 699px)");
+    const query = window.matchMedia("(max-width: 999px)");
     const update = () => setCompact(query.matches);
     update();
     query.addEventListener("change", update);
@@ -51,13 +51,13 @@ export function YelsTransformation() {
     target: section,
     offset: ["start start", "end end"],
   });
-  const beforeX = useTransform(scrollYProgress, [0.2, 0.62], ["0vw", "-8vw"]);
-  const beforeY = useTransform(scrollYProgress, [0.2, 0.62], [0, -80]);
-  const beforeOpacity = useTransform(scrollYProgress, [0.2, 0.62], [1, 0.15]);
+  const beforeX = useTransform(scrollYProgress, [0.2, 0.62], [0, "-10vw"]);
+  const beforeY = useTransform(scrollYProgress, [0.2, 0.62], [0, -50]);
+  const beforeOpacity = useTransform(scrollYProgress, [0.2, 0.62], [1, 0.12]);
   const beforeScale = useTransform(scrollYProgress, [0.2, 0.62], [1, 0.94]);
   const beforeRotate = useTransform(scrollYProgress, [0.2, 0.62], [0, -2]);
-  const afterX = useTransform(scrollYProgress, [0.38, 0.76], ["12vw", "0vw"]);
-  const afterY = useTransform(scrollYProgress, [0.38, 0.76], [120, 0]);
+  const afterX = useTransform(scrollYProgress, [0.38, 0.76], [300, 0]);
+  const afterY = useTransform(scrollYProgress, [0.38, 0.76], [90, 0]);
   const afterOpacity = useTransform(scrollYProgress, [0.38, 0.76], [0, 1]);
   const afterScale = useTransform(scrollYProgress, [0.38, 0.76], [0.94, 1]);
   const afterRotate = useTransform(scrollYProgress, [0.38, 0.76], [2, 0]);
@@ -70,10 +70,12 @@ export function YelsTransformation() {
         <motion.span className="transformation-accent transformation-accent-one" aria-hidden="true" style={staticView ? undefined : { y: accentOneY }} />
         <motion.span className="transformation-accent transformation-accent-two" aria-hidden="true" style={staticView ? undefined : { x: accentTwoX }} />
         <span className="transformation-accent transformation-accent-three" aria-hidden="true" />
+        <div className="transformation-frame">
         <header className="transformation-heading">
           <p>THE SHIFT</p>
           <h2 id="transformation-heading">Life before<br />and after<br />YELS.</h2>
         </header>
+        <div className="transformation-stage-wrap">
         <motion.article
           className="transformation-stage transformation-before"
           style={staticView ? undefined : { x: beforeX, y: beforeY, opacity: beforeOpacity, scale: beforeScale, rotate: beforeRotate }}
@@ -99,6 +101,8 @@ export function YelsTransformation() {
           <ShiftRows rows={afterRows} />
           <p className="transformation-disclaimer">YELS creates the environment for exposure, learning and connection. What participants do next is their own journey.</p>
         </motion.article>
+        </div>
+        </div>
       </div>
     </section>
   );

@@ -63,23 +63,21 @@ export function Reveal({
 }
 type HeroTiming = { delay: number; duration: number; distance?: number | string };
 const heroReveal: Variants = {
-  hidden: ({ distance = 12 }: HeroTiming) => ({ opacity: 0, y: distance }),
-  visible: ({ delay, duration }: HeroTiming) => ({
-    opacity: 1,
-    y: 0,
+  visible: ({ delay, duration, distance = 12 }: HeroTiming) => ({
+    opacity: [0, 1],
+    y: [distance, 0],
     transition: { delay, duration, ease },
   }),
 };
 const heroArtwork: Variants = {
-  hidden: { opacity: 0, y: 20, scale: 1.03 },
   visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
+    opacity: [0, 1],
+    y: [20, 0],
+    scale: [1.03, 1],
     transition: { delay: 0.28, duration: 0.8, ease },
   },
 };
-const INTRO_STORAGE_KEY = "yels26-intro-seen";
+const INTRO_MARKER = "yelsIntroPlayed";
 export function HeroSequence({
   artwork,
   children,
@@ -94,19 +92,6 @@ export function HeroSequence({
   const [introVisible, setIntroVisible] = useState(false);
 
   useEffect(() => {
-    if (!introTitle || reduced) {
-      if (introTitle && reduced) sessionStorage.setItem(INTRO_STORAGE_KEY, "true");
-      controls.set("visible");
-      return;
-    }
-
-    if (sessionStorage.getItem(INTRO_STORAGE_KEY)) {
-      controls.set("visible");
-      return;
-    }
-
-    // Mark it at the start so an interrupted navigation never triggers a replay.
-    sessionStorage.setItem(INTRO_STORAGE_KEY, "true");
     const previousOverflow = document.body.style.overflow;
     let scrollLocked = false;
     const lockScroll = () => {
@@ -119,22 +104,51 @@ export function HeroSequence({
       scrollLocked = false;
     };
 
-    lockScroll();
+    let startIntro: number | undefined;
     let exitIntro: number | undefined;
     let revealHero: number | undefined;
     let restoreIntroScroll: number | undefined;
-    const startIntro = window.setTimeout(() => {
-      setIntroVisible(true);
-      exitIntro = window.setTimeout(() => setIntroVisible(false), 1350);
-      revealHero = window.setTimeout(() => void controls.start("visible"), 1450);
-      restoreIntroScroll = window.setTimeout(restoreScroll, 2200);
-    }, 0);
+    let safetyTimer: number | undefined;
+
+    const showHero = () => {
+      controls.set("visible");
+    };
+    const failOpen = () => {
+      setIntroVisible(false);
+      showHero();
+      restoreScroll();
+    };
+
+    try {
+      if (!introTitle || reduced || document.documentElement.dataset[INTRO_MARKER] === "true") {
+        failOpen();
+      } else {
+        startIntro = window.setTimeout(() => {
+          try {
+            document.documentElement.dataset[INTRO_MARKER] = "true";
+            lockScroll();
+            setIntroVisible(true);
+            exitIntro = window.setTimeout(() => setIntroVisible(false), 1350);
+            revealHero = window.setTimeout(() => void controls.start("visible"), 1450);
+            restoreIntroScroll = window.setTimeout(restoreScroll, 2200);
+            safetyTimer = window.setTimeout(failOpen, 2800);
+          } catch (error) {
+            console.error("Unable to start the YELS intro", error);
+            failOpen();
+          }
+        }, 0);
+      }
+    } catch (error) {
+      console.error("Unable to prepare the YELS intro", error);
+      failOpen();
+    }
 
     return () => {
       window.clearTimeout(startIntro);
       window.clearTimeout(exitIntro);
       window.clearTimeout(revealHero);
       window.clearTimeout(restoreIntroScroll);
+      window.clearTimeout(safetyTimer);
       restoreScroll();
     };
   }, [controls, introTitle, reduced]);
@@ -153,7 +167,7 @@ export function HeroSequence({
           </motion.div>
         )}
       </AnimatePresence>
-      <motion.section className="hero" aria-labelledby="hero-heading" initial="hidden" animate={controls}>
+      <motion.section className="hero" aria-labelledby="hero-heading" initial={false} animate={controls}>
       <noscript>
         <style>{`
           .yels-intro { display: none !important; }

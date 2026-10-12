@@ -7,6 +7,7 @@ import { HeroSequence, HeroText, Reveal } from "./components/motion";
 import { DateMarquee } from "./components/date-marquee";
 import { Speakers, Agenda } from "./components/programme";
 import { YelsTransformation } from "./components/transformation";
+import { SummitFeature } from "./components/summit-feature";
 export default function Home() {
   return (
     <PageFrame>
@@ -83,6 +84,7 @@ export default function Home() {
           <YelsTransformation />
           <Speakers />
           <Agenda />
+          <SummitFeature />
           <section
             id="bootcamp"
             tabIndex={-1}
