@@ -1,6 +1,6 @@
 ﻿"use client";
 import { AnimatePresence, motion, useAnimationControls, type Variants } from "framer-motion";
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 const subscribeMotionPreference = (notify: () => void) => {
   const media = window.matchMedia("(prefers-reduced-motion: reduce)");
   media.addEventListener("change", notify);
@@ -79,6 +79,7 @@ const heroArtwork: Variants = {
     transition: { delay: 0.28, duration: 0.8, ease },
   },
 };
+const INTRO_STORAGE_KEY = "yels26-intro-seen";
 export function HeroSequence({
   artwork,
   children,
@@ -90,38 +91,57 @@ export function HeroSequence({
 }) {
   const controls = useAnimationControls();
   const reduced = useMotionPreference();
-  const [introVisible, setIntroVisible] = useState(Boolean(introTitle));
-  const previousOverflow = useRef("");
+  const [introVisible, setIntroVisible] = useState(false);
 
   useEffect(() => {
-    // One homepage-only timeline: title rise (0.10s), hold, curtain exit (1.35s), hero (1.45s).
-    if (!introTitle || readMotionPreference()) {
+    if (!introTitle || reduced) {
+      if (introTitle && reduced) sessionStorage.setItem(INTRO_STORAGE_KEY, "true");
       controls.set("visible");
       return;
     }
 
-    previousOverflow.current = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const exitIntro = window.setTimeout(() => setIntroVisible(false), 1350);
-    const revealHero = window.setTimeout(() => void controls.start("visible"), 1450);
+    if (sessionStorage.getItem(INTRO_STORAGE_KEY)) {
+      controls.set("visible");
+      return;
+    }
+
+    // Mark it at the start so an interrupted navigation never triggers a replay.
+    sessionStorage.setItem(INTRO_STORAGE_KEY, "true");
+    const previousOverflow = document.body.style.overflow;
+    let scrollLocked = false;
+    const lockScroll = () => {
+      document.body.style.overflow = "hidden";
+      scrollLocked = true;
+    };
+    const restoreScroll = () => {
+      if (!scrollLocked) return;
+      document.body.style.overflow = previousOverflow;
+      scrollLocked = false;
+    };
+
+    lockScroll();
+    let exitIntro: number | undefined;
+    let revealHero: number | undefined;
+    let restoreIntroScroll: number | undefined;
+    const startIntro = window.setTimeout(() => {
+      setIntroVisible(true);
+      exitIntro = window.setTimeout(() => setIntroVisible(false), 1350);
+      revealHero = window.setTimeout(() => void controls.start("visible"), 1450);
+      restoreIntroScroll = window.setTimeout(restoreScroll, 2200);
+    }, 0);
 
     return () => {
+      window.clearTimeout(startIntro);
       window.clearTimeout(exitIntro);
       window.clearTimeout(revealHero);
-      document.body.style.overflow = previousOverflow.current;
+      window.clearTimeout(restoreIntroScroll);
+      restoreScroll();
     };
-  }, [controls, introTitle]);
-
-  useEffect(() => {
-    // A changed accessibility preference never replays the entrance.
-    if (reduced) {
-      controls.set("visible");
-    }
-  }, [controls, reduced]);
+  }, [controls, introTitle, reduced]);
 
   return (
     <>
-      <AnimatePresence onExitComplete={() => { document.body.style.overflow = previousOverflow.current; }}>
+      <AnimatePresence>
         {introTitle && introVisible && !reduced && (
           <motion.div className="yels-intro" initial={{ y: 0 }} animate={{ y: 0 }} exit={{ y: "-100%" }} transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}>
             <motion.div className="yels-intro-inner" exit={{ y: -52, scale: 1.02 }} transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}>
