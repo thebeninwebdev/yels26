@@ -190,13 +190,11 @@ export function HeroSequence({
 export function HeroText({
   eyebrow,
   heading,
-  subtitle,
   description,
   cta,
 }: {
   eyebrow: string;
   heading: [string, string, string];
-  subtitle: string;
   description: string;
   cta: ReactNode;
 }) {
@@ -238,24 +236,17 @@ export function HeroText({
           ))}
         </h1>
         <div className="hero-support">
-          <motion.h2
-            className="hero-theme hero-reveal"
-            variants={heroReveal}
-            custom={{ delay: 0.4, duration: 0.5 }}
-          >
-            {subtitle}
-          </motion.h2>
           <motion.p
             className="hero-description hero-reveal"
             variants={heroReveal}
-            custom={{ delay: 0.5, duration: 0.5 }}
+            custom={{ delay: 0.4, duration: 0.5 }}
           >
             {description}
           </motion.p>
           <motion.div
             className="hero-actions hero-reveal"
             variants={heroReveal}
-            custom={{ delay: 0.65, duration: 0.5 }}
+            custom={{ delay: 0.55, duration: 0.5 }}
           >
             {cta}
           </motion.div>

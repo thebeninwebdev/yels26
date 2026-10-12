@@ -6,6 +6,7 @@ import { PageFrame } from "./components/page-frame";
 import { HeroSequence, HeroText, Reveal } from "./components/motion";
 import { DateMarquee } from "./components/date-marquee";
 import { Speakers, Agenda } from "./components/programme";
+import { YelsTransformation } from "./components/transformation";
 export default function Home() {
   return (
     <PageFrame>
@@ -15,7 +16,6 @@ export default function Home() {
             <HeroText
               eyebrow="BENIN CITY, EDO STATE"
               heading={["Youth Empowerment", "& Leadership", "Summit 2026"]}
-              subtitle={event.theme}
               description={event.supportingTheme}
               cta={<RegistrationCTA />}
             />
@@ -80,6 +80,7 @@ export default function Home() {
               </Reveal>
             </div>
           </section>
+          <YelsTransformation />
           <Speakers />
           <Agenda />
           <section
