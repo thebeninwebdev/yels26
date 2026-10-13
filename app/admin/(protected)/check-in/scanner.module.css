@@ -1,0 +1,15 @@
+.video {
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.videoActive {
+  opacity: 1;
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
