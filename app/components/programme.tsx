@@ -1,6 +1,7 @@
 ﻿import Image from "next/image";
 import { speakers, agenda, homepageConfig } from "../demo-data";
 import { Reveal } from "./motion";
+import { event } from "../event";
 export function Speakers() {
   return (
     <section
@@ -114,9 +115,9 @@ export function Agenda() {
                 : "Full programme coming soon."}
             </p>
             <p className="demo-disclosure">
-              Main summit · December 2026
+              Main summit · {event.dateLabel}
               <br />
-              Exact date to be announced.
+              {event.location}. Event time to be announced.
             </p>
           </div>
         </Reveal>
@@ -137,12 +138,10 @@ export function Agenda() {
                     >
                       <span>YELS 2026</span>
                       <strong>
-                        DATE
-                        <br />
-                        TBA
+                        {event.dateLabel.split(" ")[0]} {event.dateLabel.split(" ")[1].toUpperCase()}
                       </strong>
                       <span className="ticket-star">✳</span>
-                      <small>DECEMBER · BENIN CITY</small>
+                      <small>{event.location.split(", ").slice(1).join(", ").toUpperCase()}</small>
                     </div>
                     <div className="session-content">
                       <div className="session-chips">

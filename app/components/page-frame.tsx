@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { navigation } from "../event";
+import { event, navigation } from "../event";
 import { RegistrationCTA, Wordmark } from "./ui";
 import { ease, useMotionPreference } from "./motion";
 export function PageFrame({ children }: { children: ReactNode }) {
@@ -228,9 +228,9 @@ export function PageFrame({ children }: { children: ReactNode }) {
               <RegistrationCTA />
             </div>
             <p className="panel-note">
-              Benin City, Edo State
+              {event.location}
               <br />
-              5 December 2026 · Summit time TBA
+              {event.dateLabel} · Summit time TBA
             </p>
           </motion.div>
         )}

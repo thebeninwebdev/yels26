@@ -12,7 +12,7 @@ const cardVariants = {
 export function SummitFeature() {
   const reduced = useMotionPreference();
   const [day, month, year] = event.dateLabel.split(" ");
-  const [city, state] = event.location.split(", ");
+  const [venue, city, state] = event.location.split(", ");
   const name = event.name.replace(" 2026", "");
 
   return (
@@ -21,7 +21,7 @@ export function SummitFeature() {
         <motion.article className="summit-feature-card" variants={cardVariants} initial={reduced ? false : "hidden"} whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
           <motion.div className="summit-feature-meta" initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: reduced ? 0 : 0.16, duration: 0.5, ease }}>
             <div><span>DATE:</span><strong>{day} {month}<br />{year}</strong></div>
-            <div><span>LOCATION:</span><strong>{city}<br />{state}</strong></div>
+            <div><span>VENUE:</span><strong>{venue}<br />{city}, {state}</strong></div>
           </motion.div>
           <div className="summit-feature-bottom">
             <h2 className="summit-feature-title" id="summit-feature-title" aria-label={event.name}>

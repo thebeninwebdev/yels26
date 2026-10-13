@@ -35,7 +35,7 @@ export function Countdown() {
         <motion.div className="countdown-cta" variants={item(18)}><RegistrationCTA /></motion.div>
         <motion.p className="countdown-note" variants={item(8)}>
           {state === "unconfirmed"
-            ? "Summit date announcement coming soon."
+            ? "Summit details announcement coming soon."
             : state === "ended"
               ? "Thank you for being part of YELS 2026."
               : state === "live"

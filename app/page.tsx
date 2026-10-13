@@ -27,7 +27,7 @@ export default function Home() {
               <Icon name="calendar" />
               {event.dateLabel} · {event.location}
             </p>
-            <span>Main summit date confirmed; time and venue to be announced.</span>
+            <span>Main summit date and venue confirmed; time to be announced.</span>
           </div>
           <Countdown />
           <section

@@ -219,6 +219,12 @@ h3 {
   background: #060c16;
   will-change: transform;
 }
+html[data-yels-intro-played="true"] .yels-intro {
+  display: none;
+}
+body:has(.yels-intro) {
+  overflow: hidden;
+}
 .yels-intro-inner {
   will-change: transform;
 }
@@ -251,6 +257,11 @@ h3 {
 body:has(.yels-intro) .site-header,
 body:has(.yels-intro) .menu-toggle {
   visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .yels-intro {
+    display: none !important;
+  }
 }
 .hero-layout {
   position: relative;

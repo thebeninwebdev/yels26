@@ -13,3 +13,20 @@
   display: grid;
   place-items: center;
 }
+
+.wrap { isolation: isolate; }
+.processing, .result { position: absolute; inset: 0; z-index: 2; display: grid; min-height: 0; place-content: center; justify-items: center; overflow: auto; padding: 30px; text-align: center; }
+.processing { border: 1px solid rgba(4, 186, 255, .22); background: rgba(4, 186, 255, .06); }
+.processing b { margin-top: 16px; color: var(--foreground); font-size: 12px; font-weight: 750; letter-spacing: 1.5px; text-transform: uppercase; }
+.processing p { margin: 8px 0 0; color: var(--foreground); font-size: 15px; }
+.processing small { margin-top: 7px; color: var(--muted); font-size: 12px; }
+.spinner { width: 34px; height: 34px; border: 3px solid rgba(255, 255, 255, .12); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; }
+.status { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 14px; color: var(--muted); font-size: 11px; font-weight: 750; letter-spacing: .9px; text-transform: uppercase; }
+.status i { width: 7px; height: 7px; border-radius: 50%; background: #657587; }
+.ready { color: #74f7c1; }.ready i { background: var(--green); box-shadow: 0 0 0 4px rgba(10, 238, 153, .08); }
+.starting { color: #91ddff; }.starting i { background: var(--blue); }
+.status small { margin-left: 5px; color: var(--muted); font-size: 10px; font-weight: 400; letter-spacing: 0; text-transform: none; }
+.result > b { width: 68px; height: 68px; background: transparent; font-size: 52px; }.result h2 { font-size: clamp(26px, 4vw, 38px); }.result .button { min-width: 190px; margin-top: 12px; }.retry { border: 1px solid rgba(255, 255, 255, .18); background: transparent; color: var(--foreground) !important; }.success { border-color: rgba(10, 238, 153, .32) !important; background: rgba(10, 238, 153, .1) !important; }.success > b, .success p { color: var(--green) !important; }.warning { border-color: rgba(255, 190, 75, .28) !important; }.error { border-color: rgba(255, 100, 110, .28) !important; }.error > b { font-size: 58px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+@media (max-width: 768px) { .processing, .result { padding: 24px 18px; }.result .button { width: 100%; min-height: 52px; }.status small { width: 100%; margin-left: 0; } }

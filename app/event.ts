@@ -4,10 +4,10 @@
   theme: "Shaping the Future of Work",
   supportingTheme:
     "Empowering Youth Innovation and Leadership for Economic Growth",
-  location: "Benin City, Edo State",
-  dateLabel: "5 December 2026",
-  startsAt: "2026-12-05T00:00:00+01:00",
-  endsAt: "2026-12-06T00:00:00+01:00",
+  location: "Victor Uwaifo Creative Hub, Benin City, Edo State",
+  dateLabel: "10 December 2026",
+  startsAt: "2026-12-10T00:00:00+01:00",
+  endsAt: "2026-12-11T00:00:00+01:00",
   registrationUrl: "/register",
   bootcamp: { dates: "8–9 December 2026", time: "9:00 AM–3:00 PM" },
 };
@@ -61,7 +61,7 @@ export const content = {
     },
     {
       question: "When and where will it take place?",
-      answer: `The main summit takes place on ${event.dateLabel} in ${event.location}. The time and venue are awaiting announcement.`,
+      answer: `The main summit takes place on ${event.dateLabel} at ${event.location}. The event time will be announced.`,
     },
     {
       question: "Will there be a physical bootcamp?",

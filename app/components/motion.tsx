@@ -89,7 +89,8 @@ export function HeroSequence({
 }) {
   const controls = useAnimationControls();
   const reduced = useMotionPreference();
-  const [introVisible, setIntroVisible] = useState(false);
+  // Keep the overlay in the server HTML so the first paint is never the homepage.
+  const [introVisible, setIntroVisible] = useState(Boolean(introTitle));
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -104,7 +105,6 @@ export function HeroSequence({
       scrollLocked = false;
     };
 
-    let startIntro: number | undefined;
     let exitIntro: number | undefined;
     let revealHero: number | undefined;
     let restoreIntroScroll: number | undefined;
@@ -120,23 +120,16 @@ export function HeroSequence({
     };
 
     try {
-      if (!introTitle || reduced || document.documentElement.dataset[INTRO_MARKER] === "true") {
+      const alreadyPlayed = document.documentElement.dataset[INTRO_MARKER] === "true";
+      if (!introTitle || reduced || alreadyPlayed) {
         failOpen();
       } else {
-        startIntro = window.setTimeout(() => {
-          try {
-            document.documentElement.dataset[INTRO_MARKER] = "true";
-            lockScroll();
-            setIntroVisible(true);
-            exitIntro = window.setTimeout(() => setIntroVisible(false), 1350);
-            revealHero = window.setTimeout(() => void controls.start("visible"), 1450);
-            restoreIntroScroll = window.setTimeout(restoreScroll, 2200);
-            safetyTimer = window.setTimeout(failOpen, 2800);
-          } catch (error) {
-            console.error("Unable to start the YELS intro", error);
-            failOpen();
-          }
-        }, 0);
+        document.documentElement.dataset[INTRO_MARKER] = "true";
+        lockScroll();
+        exitIntro = window.setTimeout(() => setIntroVisible(false), 1350);
+        revealHero = window.setTimeout(() => void controls.start("visible"), 1450);
+        restoreIntroScroll = window.setTimeout(restoreScroll, 2200);
+        safetyTimer = window.setTimeout(failOpen, 2800);
       }
     } catch (error) {
       console.error("Unable to prepare the YELS intro", error);
@@ -144,7 +137,6 @@ export function HeroSequence({
     }
 
     return () => {
-      window.clearTimeout(startIntro);
       window.clearTimeout(exitIntro);
       window.clearTimeout(revealHero);
       window.clearTimeout(restoreIntroScroll);
