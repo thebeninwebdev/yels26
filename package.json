@@ -12,6 +12,7 @@
     "@hookform/resolvers": "^5.9.1",
     "@zxing/browser": "^0.2.1",
     "bcryptjs": "^3.0.3",
+    "exceljs": "^4.4.0",
     "framer-motion": "^14.0.0",
     "jose": "^6.2.12",
     "mongoose": "^9.11.1",

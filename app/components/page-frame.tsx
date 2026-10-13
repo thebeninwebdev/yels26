@@ -1,6 +1,5 @@
 ﻿"use client";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   useCallback,
@@ -10,12 +9,9 @@ import {
   type ReactNode,
 } from "react";
 import { event, navigation } from "../event";
-import { RegistrationCTA, Wordmark } from "./ui";
+import { RegistrationCTA } from "./ui";
 import { ease, useMotionPreference } from "./motion";
 
-function HeaderPartners({ mobile = false }: { mobile?: boolean }) {
-  return <div className={`header-partners ${mobile ? "header-partners-mobile" : ""}`}><span className="header-partners-label">Brought to you by</span><div className="header-partners-logos"><Image src="/us-diplomatic-mission-nigeria.png" alt="United States Diplomatic Mission in Nigeria" width={152} height={38} priority /><span className="header-partners-divider" aria-hidden="true" /><Image src="/yali-network-edo.png" alt="YALI Network Edo" width={42} height={42} priority /></div></div>;
-}
 export function PageFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -130,7 +126,6 @@ export function PageFrame({ children }: { children: ReactNode }) {
           >
             <span className="header-yels">YELS <b>2026</b></span>
           </a>
-          <HeaderPartners />
           <nav className="desktop-nav" aria-label="Main navigation">
             {navigation.map((item) => (
               <a key={item.href} href={pathname === "/" ? item.href : `/${item.href}`}>
@@ -188,7 +183,6 @@ export function PageFrame({ children }: { children: ReactNode }) {
                 />
               </button>
             </div>
-            <HeaderPartners mobile />
             <p className="eyebrow">YOUR NEXT CHAPTER</p>
             <motion.nav
               aria-label="Mobile navigation"

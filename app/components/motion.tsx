@@ -1,4 +1,5 @@
 ﻿"use client";
+import Image from "next/image";
 import { AnimatePresence, motion, useAnimationControls, type Variants } from "framer-motion";
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 const subscribeMotionPreference = (notify: () => void) => {
@@ -77,14 +78,21 @@ const heroArtwork: Variants = {
     transition: { delay: 0.28, duration: 0.8, ease },
   },
 };
+const heroBackground: Variants = {
+  visible: {
+    opacity: [0, 1],
+    scale: [1.03, 1],
+    transition: { delay: 0.02, duration: 1.5, ease },
+  },
+};
 const INTRO_MARKER = "yelsIntroPlayed";
 const INTRO_WORD_DURATION = 1.15;
 const INTRO_YELS_DELAY = 0.18;
 const INTRO_YEAR_DELAY = 0.42;
-const INTRO_EXIT_AT = 2850;
-const HERO_REVEAL_AT = 2950;
-const SCROLL_RESTORE_AT = 3900;
-const INTRO_SAFETY_AT = 4800;
+const INTRO_EXIT_AT = 1650;
+const HERO_REVEAL_AT = 1750;
+const SCROLL_RESTORE_AT = 2600;
+const INTRO_SAFETY_AT = 3300;
 export function HeroSequence({
   artwork,
   children,
@@ -131,7 +139,6 @@ export function HeroSequence({
       if (!introTitle || reduced || alreadyPlayed) {
         failOpen();
       } else {
-        document.documentElement.dataset[INTRO_MARKER] = "true";
         lockScroll();
         exitIntro = window.setTimeout(() => setIntroVisible(false), INTRO_EXIT_AT);
         revealHero = window.setTimeout(() => void controls.start("visible"), HERO_REVEAL_AT);
@@ -154,7 +161,7 @@ export function HeroSequence({
 
   return (
     <>
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => { document.documentElement.dataset[INTRO_MARKER] = "true"; }}>
         {introTitle && introVisible && !reduced && (
           <motion.div className="yels-intro" initial={{ y: 0 }} animate={{ y: 0 }} exit={{ y: "-100%" }} transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}>
             <motion.div className="yels-intro-inner" exit={{ y: -52, scale: 1.02 }} transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}>
@@ -170,12 +177,23 @@ export function HeroSequence({
       <noscript>
         <style>{`
           .yels-intro { display: none !important; }
-          .hero .hero-reveal, .hero .hero-artwork-ambient {
+          .hero .hero-reveal, .hero .hero-artwork-ambient, .hero .hero-background {
             opacity: 1 !important;
             transform: none !important;
           }
         `}</style>
       </noscript>
+      <motion.div className="hero-background" variants={heroBackground} aria-hidden="true">
+        <Image
+          src="/images/yels-hero.png"
+          alt=""
+          fill
+          preload
+          sizes="100vw"
+          className="hero-background-image"
+        />
+      </motion.div>
+      <div className="hero-background-overlay" aria-hidden="true" />
       <div className="container hero-layout">{children}</div>
       <div className="hero-artwork" aria-hidden="true">
         <motion.div className="hero-artwork-entrance hero-reveal" variants={heroArtwork}>

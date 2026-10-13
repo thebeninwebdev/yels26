@@ -13,8 +13,7 @@
 };
 export const navigation = [
   { label: "About", href: "#about" },
-  { label: "Speakers", href: "#speakers" },
-  { label: "Agenda", href: "#agenda" },
+  { label: "Experience", href: "#experience" },
   { label: "Bootcamp", href: "#bootcamp" },
   { label: "FAQ", href: "#faq" },
 ];
@@ -37,6 +36,21 @@ export const content = {
       text: "Turn ideas into impact and be part of a more inclusive and prosperous future.",
       icon: "chart",
     },
+  ],
+  experience: [
+    { title: "Summit", text: "Conversations and perspectives around leadership, innovation and the future of work." },
+    { title: "Bootcamp", text: "An intensive physical learning experience for selected participants." },
+    { title: "Mentorship", text: "Opportunities to learn from people with practical experience." },
+    { title: "Network", text: "Meet ambitious young people, entrepreneurs, professionals and opportunity builders." },
+    { title: "Pitch", text: "An opportunity for participants to develop and showcase ideas." },
+  ],
+  audiences: ["Students", "Young professionals", "Entrepreneurs", "Innovators", "Private-sector practitioners", "Government", "Civil society"],
+  bootcampJourney: [
+    { title: "Apply", text: "Register for YELS and indicate interest in the Bootcamp." },
+    { title: "Screening", text: "Applications are reviewed for eligibility and completeness." },
+    { title: "Onboarding", text: "Eligible applicants proceed through onboarding and learning activities." },
+    { title: "Assessment", text: "Applicants complete the announced selection process." },
+    { title: "Final 50", text: "50 participants are selected for the physical Bootcamp." },
   ],
   programme:
     "A programme designed to equip young people with skills, networks and opportunities to shape the future.",
@@ -64,9 +78,16 @@ export const content = {
       answer: `The main summit takes place on ${event.dateLabel} at ${event.location}. The event time will be announced.`,
     },
     {
-      question: "Will there be a physical bootcamp?",
+      question: "Who is YELS 2026 for?",
+      answer: "YELS welcomes students, young professionals, entrepreneurs, innovators, private-sector practitioners, government and civil society participants.",
+    },
+    {
+      question: "What is the YELS Bootcamp?",
       answer: `Yes. A physical bootcamp is one activity within YELS 2026, scheduled for ${event.bootcamp.dates}, ${event.bootcamp.time}. Participation details are coming soon. These are the bootcamp dates, not the main summit dates.`,
     },
+    { question: "Does registering guarantee a Bootcamp spot?", answer: "No. Registration does not guarantee selection. Applications are reviewed through the announced selection process." },
+    { question: "How many people will be selected for the Bootcamp?", answer: "50 participants will be selected for the physical Bootcamp." },
+    { question: "Will there be a pitch competition?", answer: "A pitching opportunity forms part of the YELS experience. Competition details will be announced soon." },
     {
       question: "When will the full programme be released?",
       answer:
