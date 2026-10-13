@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Attendee } from "@/lib/models/attendee";
 import { dateTime, present, statusClass } from "@/lib/admin/format";
@@ -6,7 +7,10 @@ import { dateTime, present, statusClass } from "@/lib/admin/format";
 const allowed = { bootcamp: ["", "applied", "not_applied"], bootcampStatus: ["", "pending", "approved", "rejected", "waitlisted"], ticket: ["", "sent", "pending", "failed"], checkIn: ["", "checked_in", "not_checked_in"], registration: ["", "registered", "cancelled"] } as const;
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+export const instant = false;
+
 export default async function AttendeesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  await connection();
   const raw = await searchParams;
   const filter = (key: keyof typeof allowed) => { const value = typeof raw[key] === "string" ? raw[key] : ""; return allowed[key].includes(value as never) ? value : ""; };
   const q = typeof raw.q === "string" ? raw.q.trim().slice(0, 100) : "";
