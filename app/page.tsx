@@ -15,7 +15,7 @@ export default function Home() {
         <main id="main" tabIndex={-1}>
           <HeroSequence introTitle="YELS 26" artwork={<RibbonArtwork />}>
             <HeroText
-              eyebrow="BENIN CITY, EDO STATE"
+              eyebrow="VICTOR UWAIFO CREATIVE HUB · BENIN CITY, EDO STATE"
               heading={["Youth Empowerment", "& Leadership", "Summit 2026"]}
               description={event.supportingTheme}
               cta={<RegistrationCTA />}

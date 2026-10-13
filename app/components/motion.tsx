@@ -78,6 +78,13 @@ const heroArtwork: Variants = {
   },
 };
 const INTRO_MARKER = "yelsIntroPlayed";
+const INTRO_WORD_DURATION = 1.15;
+const INTRO_YELS_DELAY = 0.18;
+const INTRO_YEAR_DELAY = 0.42;
+const INTRO_EXIT_AT = 2850;
+const HERO_REVEAL_AT = 2950;
+const SCROLL_RESTORE_AT = 3900;
+const INTRO_SAFETY_AT = 4800;
 export function HeroSequence({
   artwork,
   children,
@@ -126,10 +133,10 @@ export function HeroSequence({
       } else {
         document.documentElement.dataset[INTRO_MARKER] = "true";
         lockScroll();
-        exitIntro = window.setTimeout(() => setIntroVisible(false), 1350);
-        revealHero = window.setTimeout(() => void controls.start("visible"), 1450);
-        restoreIntroScroll = window.setTimeout(restoreScroll, 2200);
-        safetyTimer = window.setTimeout(failOpen, 2800);
+        exitIntro = window.setTimeout(() => setIntroVisible(false), INTRO_EXIT_AT);
+        revealHero = window.setTimeout(() => void controls.start("visible"), HERO_REVEAL_AT);
+        restoreIntroScroll = window.setTimeout(restoreScroll, SCROLL_RESTORE_AT);
+        safetyTimer = window.setTimeout(failOpen, INTRO_SAFETY_AT);
       }
     } catch (error) {
       console.error("Unable to prepare the YELS intro", error);
@@ -152,8 +159,8 @@ export function HeroSequence({
           <motion.div className="yels-intro" initial={{ y: 0 }} animate={{ y: 0 }} exit={{ y: "-100%" }} transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}>
             <motion.div className="yels-intro-inner" exit={{ y: -52, scale: 1.02 }} transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}>
               <h1 className="yels-intro-title" aria-label={introTitle}>
-                <span className="yels-intro-mask"><motion.span className="yels-intro-word" initial={{ opacity: 0, y: "105%" }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.84, delay: 0.1, ease }}>YELS</motion.span></span>
-                <span className="yels-intro-mask"><motion.span className="yels-intro-year" initial={{ opacity: 0, y: "105%" }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.84, delay: 0.18, ease }}>26</motion.span></span>
+                <span className="yels-intro-mask"><motion.span className="yels-intro-word" initial={{ opacity: 0, y: "105%" }} animate={{ opacity: 1, y: 0 }} transition={{ duration: INTRO_WORD_DURATION, delay: INTRO_YELS_DELAY, ease }}>YELS</motion.span></span>
+                <span className="yels-intro-mask"><motion.span className="yels-intro-year" initial={{ opacity: 0, y: "105%" }} animate={{ opacity: 1, y: 0 }} transition={{ duration: INTRO_WORD_DURATION, delay: INTRO_YEAR_DELAY, ease }}>26</motion.span></span>
               </h1>
             </motion.div>
           </motion.div>
