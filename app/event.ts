@@ -4,7 +4,7 @@
   theme: "Shaping the Future of Work",
   supportingTheme:
     "Empowering Youth Innovation and Leadership for Economic Growth",
-  location: "Victor Uwaifo Creative Hub, Benin City, Edo State",
+  location: "Benin City, Edo State, Nigeria",
   dateLabel: "10 December 2026",
   startsAt: "2026-12-10T00:00:00+01:00",
   endsAt: "2026-12-11T00:00:00+01:00",

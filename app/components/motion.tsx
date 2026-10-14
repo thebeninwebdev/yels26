@@ -220,13 +220,15 @@ export function HeroSequence({
 }
 export function HeroText({
   eyebrow,
+  organiser,
   heading,
   description,
   cta,
 }: {
   eyebrow: string;
+  organiser?: ReactNode;
   heading: [string, string, string];
-  description: string;
+  description?: string;
   cta: ReactNode;
 }) {
   return (
@@ -267,13 +269,24 @@ export function HeroText({
           ))}
         </h1>
         <div className="hero-support">
-          <motion.p
-            className="hero-description hero-reveal"
-            variants={heroReveal}
-            custom={{ delay: 0.4, duration: 0.5 }}
-          >
-            {description}
-          </motion.p>
+          {organiser && (
+            <motion.div
+              className="hero-organiser hero-reveal"
+              variants={heroReveal}
+              custom={{ delay: 0.4, duration: 0.5 }}
+            >
+              {organiser}
+            </motion.div>
+          )}
+          {description && (
+            <motion.p
+              className="hero-description hero-reveal"
+              variants={heroReveal}
+              custom={{ delay: 0.4, duration: 0.5 }}
+            >
+              {description}
+            </motion.p>
+          )}
           <motion.div
             className="hero-actions hero-reveal"
             variants={heroReveal}

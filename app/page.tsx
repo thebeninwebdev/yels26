@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { event, navigation } from "./event";
+import { navigation } from "./event";
 import { RibbonArtwork } from "./components/artwork";
 import { Countdown, FAQ } from "./components/interactive";
 import { Icon, RegistrationCTA } from "./components/ui";
@@ -17,9 +17,35 @@ export default function Home() {
         <main id="main" tabIndex={-1}>
           <HeroSequence introTitle="YELS 26" artwork={<RibbonArtwork />}>
             <HeroText
-              eyebrow="VICTOR UWAIFO CREATIVE HUB · BENIN CITY, EDO STATE"
+              eyebrow="BENIN CITY, EDO STATE, NIGERIA"
+              organiser={
+                <div className="hero-organiser-lockup">
+                  <p className="hero-organiser-label">Presented by</p>
+                  <a
+                    className="hero-organiser-content"
+                    href="https://www.instagram.com/yali_networkedo/"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Visit YALI Network Edo on Instagram"
+                  >
+                    <Image
+                      className="hero-organiser-logo"
+                      src="/us-diplomatic-mission-nigeria.png"
+                      alt="United States Diplomatic Mission in Nigeria"
+                      width={119}
+                      height={91}
+                    />
+                    <Image
+                      className="hero-organiser-logo hero-organiser-logo-yali"
+                      src="/yali-network-edo.png"
+                      alt="YALI Network Edo"
+                      width={135}
+                      height={118}
+                    />
+                  </a>
+                </div>
+              }
               heading={["Youth Empowerment", "& Leadership", "Summit 2026"]}
-              description={event.supportingTheme}
               cta={<RegistrationCTA />}
             />
           </HeroSequence>
@@ -61,7 +87,7 @@ export default function Home() {
         <footer className="site-footer">
           <div className="container">
             <div className="footer-top">
-              <a href="#top" className="footer-partner-logos" aria-label="Partners — back to top">
+              <a href="https://www.instagram.com/yali_networkedo/" target="_blank" rel="noreferrer" className="footer-partner-logos" aria-label="Visit YALI Network Edo on Instagram">
                 <Image src="/us-diplomatic-mission-nigeria.png" alt="United States Diplomatic Mission in Nigeria" width={119} height={91} />
                 <Image src="/yali-network-edo.png" alt="YALI Network Edo" width={135} height={118} />
               </a>
@@ -72,6 +98,7 @@ export default function Home() {
             <div className="footer-bottom">
               <p>YOUTH EMPOWERMENT &amp; LEADERSHIP SUMMIT</p>
               <p>BENIN CITY, EDO STATE · 2026</p>
+              <a className="footer-credit" href="https://mreseosa.com" target="_blank" rel="noreferrer">Built by Mreseosa</a>
             </div>
           </div>
         </footer>

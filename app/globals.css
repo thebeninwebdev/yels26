@@ -299,7 +299,7 @@ body:has(.yels-intro) .menu-toggle {
   gap: 40px;
 }
 .hero .eyebrow {
-  margin-bottom: 40px;
+  margin-bottom: 26px;
 }
 .hero-location {
   position: relative;
@@ -339,6 +339,44 @@ body:has(.yels-intro) .menu-toggle {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
+}
+.hero-organiser {
+  margin-bottom: 30px;
+}
+.hero-organiser-lockup {
+  display: grid;
+  justify-items: start;
+  gap: 9px;
+}
+.hero-organiser-label {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: .18em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+.hero-organiser-content {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  gap: 20px;
+  padding: 16px 20px;
+  border: 1px solid rgba(226, 232, 240, .9);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
+}
+.hero-organiser-logo {
+  display: block;
+  width: auto;
+  height: 68px;
+  max-width: 100%;
+  object-fit: contain;
+}
+.hero-organiser-logo-yali {
+  height: 82px;
 }
 .hero h1 {
   min-width: 0;
@@ -1228,7 +1266,14 @@ body:has(.yels-intro) .menu-toggle {
 .footer-partner-logos {
   display: flex;
   align-items: center;
-  gap: 18px;
+  width: fit-content;
+  max-width: 100%;
+  gap: 20px;
+  padding: 16px 20px;
+  border: 1px solid rgba(226, 232, 240, .9);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
 }
 .footer-partner-logos img {
   display: block;
@@ -1252,6 +1297,12 @@ body:has(.yels-intro) .menu-toggle {
   font-size: 8px;
   letter-spacing: 1.3px;
   color: var(--muted);
+}
+.footer-credit {
+  color: var(--muted);
+  font-weight: 650;
+  opacity: .72;
+  text-transform: uppercase;
 }
 .mobile-panel {
   position: fixed;
@@ -1569,6 +1620,10 @@ body:has(.yels-intro) .menu-toggle {
   .yels-intro-title {
     font-size: clamp(4rem, 21vw, 8rem);
   }
+  .footer-partner-logos {
+    gap: 16px;
+    padding: 12px 16px;
+  }
   .container {
     width: calc(100% - 40px);
   }
@@ -1604,7 +1659,7 @@ body:has(.yels-intro) .menu-toggle {
   .hero .eyebrow {
     font-size: 12px;
     letter-spacing: -0.02em;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     padding: 12px 20px;
     gap: 8px;
   }
@@ -1626,6 +1681,22 @@ body:has(.yels-intro) .menu-toggle {
   }
   .hero-artwork-entrance {
     width: max(160vw, 760px);
+  }
+  .hero-organiser {
+    margin-bottom: 26px;
+  }
+  .hero-organiser-lockup {
+    gap: 12px;
+  }
+  .hero-organiser-content {
+    gap: 16px;
+    padding: 12px 16px;
+  }
+  .hero-organiser-logo {
+    height: 52px;
+  }
+  .hero-organiser-logo-yali {
+    height: 64px;
   }
   .hero-artwork {
     opacity: .2;
