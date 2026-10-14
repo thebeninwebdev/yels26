@@ -10,6 +10,14 @@
   endsAt: "2026-12-11T00:00:00+01:00",
   registrationUrl: "/register",
   bootcamp: { dates: "8–9 December 2026", time: "9:00 AM–3:00 PM" },
+  pitch: {
+    eyebrow: "Pitch Opportunity",
+    heading: "Have an idea?",
+    accentHeading: "Take it further.",
+    description:
+      "A pitching opportunity forms part of the YELS 2026 experience, giving participants another platform to develop and showcase their ideas.",
+    status: "Competition details coming soon.",
+  },
 };
 export const navigation = [
   { label: "About", href: "#about" },
@@ -19,22 +27,40 @@ export const navigation = [
 ];
 export const content = {
   about:
-    "YELS 2026 is a platform for young people to learn, connect and lead—driving innovation, opportunity and inclusive growth across our communities and beyond.",
+    "YELS 2026 brings together ambitious young people, innovators, entrepreneurs and leaders to explore the skills, ideas and opportunities shaping the future of work.",
   benefits: [
     {
       title: "Learn",
-      text: "Gain practical skills, fresh perspectives and real-world insights.",
+      text: "Gain practical skills, perspectives and exposure relevant to a changing world of work.",
       icon: "book",
     },
     {
       title: "Connect",
-      text: "Build meaningful relationships with peers, mentors and opportunity builders.",
+      text: "Build meaningful relationships with ambitious young people, mentors and opportunity builders.",
       icon: "people",
     },
     {
       title: "Lead",
-      text: "Turn ideas into impact and be part of a more inclusive and prosperous future.",
+      text: "Develop the confidence, thinking and networks required to turn ideas into meaningful action.",
       icon: "chart",
+    },
+  ],
+  transformation: [
+    {
+      before: "Ideas without direction",
+      after: "A clearer sense of direction",
+    },
+    {
+      before: "Limited opportunities",
+      after: "Practical skills and exposure",
+    },
+    {
+      before: "Working in isolation",
+      after: "A supportive community",
+    },
+    {
+      before: "Unclear next steps",
+      after: "Greater opportunities to grow",
     },
   ],
   experience: [
