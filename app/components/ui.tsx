@@ -1,9 +1,9 @@
 ﻿import Link from "next/link";
 import { event } from "../event";
-export function RegistrationCTA() {
+export function RegistrationCTA({ label = "Register for the Summit" }: { label?: string }) {
   return event.registrationUrl ? (
     <Link className="registration" href={event.registrationUrl}>
-      Register for the Summit <span aria-hidden="true">↗</span>
+      {label} <span aria-hidden="true">↗</span>
     </Link>
   ) : (
     <span className="registration registration-pending">

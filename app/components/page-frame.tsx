@@ -1,5 +1,6 @@
 ﻿"use client";
-import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   useCallback,
@@ -22,21 +23,12 @@ export function PageFrame({ children }: { children: ReactNode }) {
   const shell = useRef<HTMLDivElement>(null);
   const pendingAnchor = useRef<string | null>(null);
   const reduced = useMotionPreference();
-  const navControls = useAnimationControls();
   const close = useCallback(() => {
     setOpen(false);
     requestAnimationFrame(() =>
       trigger.current?.focus({ preventScroll: true }),
     );
   }, []);
-  useEffect(() => {
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      void navControls.start({
-        opacity: [0, 1],
-        y: [-8, 0],
-        transition: { duration: 0.45 },
-      });
-  }, [navControls]);
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 500);
     update();
@@ -112,19 +104,21 @@ export function PageFrame({ children }: { children: ReactNode }) {
   }, [open, close]);
   return (
     <div className="page-frame" data-menu-open={open}>
-      <motion.header
-        className="site-header"
-        initial={false}
-        animate={navControls}
-        inert={open}
-      >
+      <header className="site-header" inert={open}>
         <div className="container nav-inner">
           <a
             href="#top"
             className="brand-link"
             aria-label="YELS 2026 — home"
           >
-            <span className="header-yels">YELS <b>2026</b></span>
+            <Image
+              className="header-logo"
+              src="/images/logo.png"
+              alt="YELS 2026"
+              width={150}
+              height={60}
+              priority
+            />
           </a>
           <nav className="desktop-nav" aria-label="Main navigation">
             {navigation.map((item) => (
@@ -137,7 +131,7 @@ export function PageFrame({ children }: { children: ReactNode }) {
             <RegistrationCTA />
           </div>
         </div>
-      </motion.header>
+      </header>
       <button
         ref={trigger}
         className={`menu-toggle ${open ? "is-open" : ""}`}
@@ -165,7 +159,13 @@ export function PageFrame({ children }: { children: ReactNode }) {
             transition={{ duration: reduced ? 0 : 0.5, ease }}
           >
             <div className="panel-heading">
-              <span className="header-yels">YELS <b>2026</b></span>
+              <Image
+                className="header-logo"
+                src="/images/logo.png"
+                alt="YELS 2026"
+                width={150}
+                height={60}
+              />
               <button
                 className="panel-close"
                 aria-label="Close navigation"

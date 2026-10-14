@@ -70,7 +70,7 @@ export const content = {
     { title: "Network", text: "Meet ambitious young people, entrepreneurs, professionals and opportunity builders." },
     { title: "Pitch", text: "An opportunity for participants to develop and showcase ideas." },
   ],
-  audiences: ["Students", "Young professionals", "Entrepreneurs", "Innovators", "Private-sector practitioners", "Government", "Civil society"],
+  audiences: ["Students", "Professionals", "Entrepreneurs", "Creatives"],
   bootcampJourney: [
     { title: "Apply", text: "Register for YELS and indicate interest in the Bootcamp." },
     { title: "Screening", text: "Applications are reviewed for eligibility and completeness." },

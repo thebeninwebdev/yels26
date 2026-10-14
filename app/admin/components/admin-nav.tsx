@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 const items = [
   ["Attendees", "/admin/attendees", "users"],
+  ["Bootcamp", "/admin/bootcamp", "bootcamp"],
   ["Check-in", "/admin/check-in", "scanner"],
   ["Settings", "/admin/settings", "settings"],
 ] as const;
@@ -14,6 +15,7 @@ export function Icon({ name }: { name: string }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true">
     {name === "users" ? <><circle cx="8" cy="8" r="3" /><path d="M2.5 20v-1.5A4.5 4.5 0 0 1 7 14h2a4.5 4.5 0 0 1 4.5 4.5V20M16 4.5a3.5 3.5 0 0 1 0 7M17 14a4.5 4.5 0 0 1 4.5 4.5V20" /></>
       : name === "scanner" ? <><path d="M4 9V5h4M16 5h4v4M20 15v4h-4M8 19H4v-4" /><path d="M8 12h8M12 8v8" /></>
+      : name === "bootcamp" ? <><path d="M4 8.5 12 4l8 4.5-8 4.5-8-4.5Z" /><path d="M7 10.2V15c2.8 2.3 7.2 2.3 10 0v-4.8M20 9v6" /></>
       : name === "settings" ? <><circle cx="12" cy="12" r="3" /><path d="m12 2 1.2 2.5 2.7.7 2.3-1.4 1.7 1.7-1.4 2.3.7 2.7L22 12l-2.5 1.2-.7 2.7 1.4 2.3-1.7 1.7-2.3-1.4-2.7.7L12 22l-1.2-2.5-2.7-.7-2.3 1.4-1.7-1.7 1.4-2.3-.7-2.7L2 12l2.5-1.2.7-2.7-1.4-2.3 1.7-1.7 2.3 1.4 2.7-.7L12 2Z" /></>
       : <><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /></>}
   </svg>;

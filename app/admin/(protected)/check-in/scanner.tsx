@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import styles from "./scanner.module.css";
+import stateStyles from "./scanner-states.module.css";
 
 type ScannerState =
   | "requesting-camera"
@@ -180,7 +181,7 @@ export function CheckInScanner({ initialCheckedIn, total, recent }: { initialChe
     }
   };
 
-  const resultVisible = !["scanning", "requesting-camera", "camera-error", "verifying"].includes(state);
+  const resultVisible = !["scanning", "requesting-camera", "camera-error", "verifying", "checking-in"].includes(state);
 
   return <div className={`${styles.shell} checkin-shell`}>
     <main className={`${styles.stage} checkin-stage`}>
@@ -195,13 +196,14 @@ export function CheckInScanner({ initialCheckedIn, total, recent }: { initialChe
               <button className={`${styles.roundControl} ${torch ? styles.active : ""}`} onClick={() => void toggleTorch()} aria-label="Toggle flash"><CameraIcon /></button>
             </div>}
           </>}
-          {state === "camera-error" && <Result icon="!" title="Camera access required" copy="Allow camera access to scan attendee tickets." action="Try camera again" onAction={() => void startCamera()} />}
-          {state === "verifying" && <div className={styles.loading} role="status"><i /><b>Verifying ticket</b></div>}
+          {state === "camera-error" && <Result icon="!" title="Camera access required" copy="Allow camera access to scan attendee tickets, then try again." action="Try camera again" onAction={() => void startCamera()} />}
+          {state === "verifying" && <LoadingState title="Verifying ticket" copy="Checking this YELS 2026 registration…" />}
+          {state === "checking-in" && <LoadingState title="Checking in attendee" copy={attendee ? `Saving ${attendee.fullName}'s arrival…` : "Saving check-in…"} />}
           <AnimatePresence mode="wait">{resultVisible && <motion.div className={styles.resultWrap} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
             <Result
               icon={state === "checked-in" || state === "attendee-found" ? "✓" : state === "already-checked-in" ? "!" : "×"}
               title={state === "attendee-found" ? "Attendee found" : state === "checked-in" ? "Checked in" : state === "already-checked-in" ? "Already checked in" : state === "invalid" ? "Ticket not recognised" : "Check-in unavailable"}
-              copy={state === "checked-in" && attendee ? `${attendee.fullName} · ${clock(attendee.checkedInAt)}` : message}
+              copy={state === "checked-in" && attendee ? `${attendee.fullName} checked in at ${clock(attendee.checkedInAt)}.` : state === "already-checked-in" && attendee ? `${attendee.fullName} was checked in at ${clock(attendee.checkedInAt)}.` : message}
               attendee={attendee}
               action={state === "attendee-found" ? "Check in attendee" : state === "checked-in" ? "Scan next attendee" : state === "invalid" ? "Try again" : "Scan another ticket"}
               onAction={state === "attendee-found" ? () => void checkIn() : () => void startCamera()}
@@ -229,14 +231,19 @@ function RecentView({ items, checkedIn, total, clock }: { items: RecentCheckIn[]
   </section>;
 }
 
+function LoadingState({ title, copy }: { title: string; copy: string }) {
+  return <div className={`${styles.loading} ${stateStyles.loadingState}`} role="status" aria-live="polite"><i /><b>{title}</b><small>{copy}</small></div>;
+}
+
 function Result({ icon, title, copy, attendee, action, onAction, busy, secondary, secondaryLabel }: { icon: string; title: string; copy?: string; attendee?: Attendee | null; action: string; onAction: () => void; busy?: boolean; secondary?: () => void; secondaryLabel?: string }) {
-  return <div className={styles.result} role={icon === "×" ? "alert" : "status"} aria-live="polite">
-    <b className={`${styles.resultIcon} ${icon === "×" ? styles.errorIcon : ""}`}>{icon}</b>
+  const tone = title === "Checked in" || title === "Attendee found" ? stateStyles.success : title === "Already checked in" ? stateStyles.warning : stateStyles.error;
+  return <div className={`${styles.result} ${tone}`} role={tone === stateStyles.error ? "alert" : "status"} aria-live="polite">
+    <b className={styles.resultIcon}>{icon}</b>
     <p>{title}</p>
     {attendee && <div className={styles.attendee}><strong>{attendee.fullName}</strong><dl>
       <div><dt>Registration</dt><dd>{attendee.registrationId}</dd></div>
       <div><dt>Type</dt><dd>{attendee.participantType}</dd></div>
-      <div><dt>Bootcamp</dt><dd>{attendee.bootcampApplied ? "Selected" : "Not applied"}</dd></div>
+      <div><dt>Bootcamp</dt><dd>{attendee.bootcampApplied ? attendee.bootcampStatus.replaceAll("_", " ") : "Not applied"}</dd></div>
       {attendee.checkedInAt && <div><dt>Check-in</dt><dd>{new Date(attendee.checkedInAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</dd></div>}
     </dl></div>}
     {copy && <small>{copy}</small>}
