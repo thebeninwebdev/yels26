@@ -9,7 +9,7 @@ export function Countdown() {
   const [now, setNow] = useState<number | null>(null);
   const reduced = useMotionPreference();
   useEffect(() => {
-    if (!event.startsAt || !event.endsAt) return;
+    if (!event.startsAt) return;
     const updateNow = () => setNow(Date.now());
     updateNow();
     const timer = window.setInterval(updateNow, 1000);

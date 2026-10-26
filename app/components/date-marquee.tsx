@@ -1,12 +1,10 @@
 "use client";
 import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
 import { useEffect, useRef } from "react";
-import { event } from "../event";
 import { useMotionPreference } from "./motion";
 
 function DateTag({ bootcamp, index }: { bootcamp: boolean; index: number }) {
-  const [day, month, year] = event.dateLabel.split(" ");
-  return <div className={`date-ticket ticket-color-${index % 3}`}><span className="ticket-label">{bootcamp ? "PHYSICAL BOOTCAMP" : "SUMMIT"}</span><div className="ticket-details"><strong>{bootcamp ? "08–09" : day}</strong><span>{bootcamp ? <>DECEMBER<br />2026</> : <>{month.toUpperCase()}<br /><b>{year}</b></>}</span></div></div>;
+  return <div className={`date-ticket ticket-color-${index % 3}`}><span className="ticket-label">{bootcamp ? "PHYSICAL BOOTCAMP" : "FULL PROGRAMME"}</span><div className="ticket-details"><strong>{bootcamp ? "08–09" : "08–10"}</strong><span>DECEMBER<br /><b>2026</b></span></div></div>;
 }
 
 export function DateMarquee() {

@@ -5,11 +5,14 @@
   supportingTheme:
     "Empowering Youth Innovation and Leadership for Economic Growth",
   location: "Benin City, Edo State, Nigeria",
-  dateLabel: "10 December 2026",
-  startsAt: "2026-12-10T00:00:00+01:00",
-  endsAt: "2026-12-11T00:00:00+01:00",
+  dateLabel: "8–10 December 2026",
+  startsAt: "2026-12-08T09:00:00+01:00",
+  endsAt: null,
   registrationUrl: "/register",
+  venue: "To be announced",
+  programme: { dates: "8–10 December 2026" },
   bootcamp: { dates: "8–9 December 2026", time: "9:00 AM–3:00 PM" },
+  grandFinale: { date: "10 December 2026", label: "Grand finale pitching competition" },
   pitch: {
     eyebrow: "Pitch Opportunity",
     heading: "Have an idea?",
@@ -21,6 +24,7 @@
 };
 export const navigation = [
   { label: "About", href: "#about" },
+  { label: "Convener", href: "/convener" },
   { label: "Experience", href: "#experience" },
   { label: "Bootcamp", href: "#bootcamp" },
   { label: "FAQ", href: "#faq" },
@@ -101,7 +105,7 @@ export const content = {
     },
     {
       question: "When and where will it take place?",
-      answer: `The main summit takes place on ${event.dateLabel} at ${event.location}. The event time will be announced.`,
+      answer: `YELS 2026 runs from ${event.programme.dates} in ${event.location}. The physical Bootcamp holds on ${event.bootcamp.dates}, ${event.bootcamp.time}, followed by the ${event.grandFinale.label.toLowerCase()} on ${event.grandFinale.date}. The exact venue will be announced.`,
     },
     {
       question: "Who is YELS 2026 for?",
@@ -109,7 +113,7 @@ export const content = {
     },
     {
       question: "What is the YELS Bootcamp?",
-      answer: `Yes. A physical bootcamp is one activity within YELS 2026, scheduled for ${event.bootcamp.dates}, ${event.bootcamp.time}. Participation details are coming soon. These are the bootcamp dates, not the main summit dates.`,
+      answer: `The physical Bootcamp is one activity within YELS 2026, scheduled for ${event.bootcamp.dates}, ${event.bootcamp.time}. Participation details are coming soon.`,
     },
     { question: "Does registering guarantee a Bootcamp spot?", answer: "No. Registration does not guarantee selection. Applications are reviewed through the announced selection process." },
     { question: "How many people will be selected for the Bootcamp?", answer: "50 participants will be selected for the physical Bootcamp." },

@@ -69,7 +69,7 @@ export function FinalCTA() {
         <Reveal delay={0.34}>
           <dl className="final-cta-details">
             <div><dt>Date</dt><dd>{event.dateLabel}</dd></div>
-            <div><dt>Venue</dt><dd>{event.location}</dd></div>
+            <div><dt>Location</dt><dd>{event.location}<br />Venue to be announced</dd></div>
           </dl>
         </Reveal>
       </div>

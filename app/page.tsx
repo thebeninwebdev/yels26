@@ -9,6 +9,7 @@ import { DateMarquee } from "./components/date-marquee";
 import { AboutSection } from "./components/about";
 import { YelsTransformation } from "./components/transformation";
 import { Audience, BootcampExperience, Experience, FinalCTA, PitchOpportunity } from "./components/experience";
+import { ConvenerSection } from "./components/convener";
 
 export default function Home() {
   return (
@@ -53,6 +54,7 @@ export default function Home() {
           <Countdown />
           <AboutSection />
           <Audience />
+          <ConvenerSection />
           <Experience />
           <YelsTransformation />
           <BootcampExperience />

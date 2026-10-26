@@ -6,15 +6,14 @@
   const explicitZone = /T.*(?:Z|[+-]\d{2}:\d{2})$/i;
   const start =
     startsAt && explicitZone.test(startsAt) ? Date.parse(startsAt) : NaN;
-  const end = endsAt && explicitZone.test(endsAt) ? Date.parse(endsAt) : NaN;
+  const end = endsAt && explicitZone.test(endsAt) ? Date.parse(endsAt) : null;
   if (
     now === null ||
     !Number.isFinite(start) ||
-    !Number.isFinite(end) ||
-    end <= start
+    (end !== null && (!Number.isFinite(end) || end <= start))
   )
     return { state: "unconfirmed", values: ["--", "--", "--", "--"] };
-  const state = now >= end ? "ended" : now >= start ? "live" : "upcoming";
+  const state = end !== null && now >= end ? "ended" : now >= start ? "live" : "upcoming";
   const seconds = Math.max(0, Math.floor((start - now) / 1000));
   return {
     state,

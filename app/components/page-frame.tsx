@@ -122,7 +122,7 @@ export function PageFrame({ children }: { children: ReactNode }) {
           </a>
           <nav className="desktop-nav" aria-label="Main navigation">
             {navigation.map((item) => (
-              <a key={item.href} href={pathname === "/" ? item.href : `/${item.href}`}>
+              <a key={item.href} href={item.href.startsWith("/") ? item.href : pathname === "/" ? item.href : `/${item.href}`}>
                 {item.label}
               </a>
             ))}
@@ -201,14 +201,14 @@ export function PageFrame({ children }: { children: ReactNode }) {
               {navigation.map((item, i) => (
                 <motion.a
                   key={item.href}
-                  href={pathname === "/" ? item.href : `/${item.href}`}
+                  href={item.href.startsWith("/") ? item.href : pathname === "/" ? item.href : `/${item.href}`}
                   variants={{
                     closed: { opacity: 0, x: -18 },
                     open: { opacity: 1, x: 0 },
                   }}
                   transition={{ duration: reduced ? 0 : 0.35 }}
                   onClick={(e) => {
-                    if (pathname !== "/") return;
+                    if (pathname !== "/" || !item.href.startsWith("#")) return;
                     e.preventDefault();
                     pendingAnchor.current = item.href;
                     close();
@@ -231,7 +231,7 @@ export function PageFrame({ children }: { children: ReactNode }) {
             <p className="panel-note">
               {event.location}
               <br />
-              {event.dateLabel} · Summit time TBA
+              {event.dateLabel} · Venue to be announced
             </p>
           </motion.div>
         )}
@@ -300,4 +300,8 @@ export function PageFrame({ children }: { children: ReactNode }) {
       </AnimatePresence>
     </div>
   );
+}
+
+export function SiteFooter() {
+  return <footer className="site-footer"><div className="container"><div className="footer-top"><a href="https://www.instagram.com/yali_networkedo/" target="_blank" rel="noreferrer" className="footer-partner-logos" aria-label="Visit YALI Network Edo on Instagram"><Image src="/us-diplomatic-mission-nigeria.png" alt="United States Diplomatic Mission in Nigeria" width={119} height={91} /><Image src="/yali-network-edo.png" alt="YALI Network Edo" width={135} height={118} /></a><nav aria-label="Footer navigation">{navigation.map((item) => <a href={item.href.startsWith("/") ? item.href : `/${item.href}`} key={item.href}>{item.label}</a>)}</nav></div><div className="footer-bottom"><p>YOUTH EMPOWERMENT &amp; LEADERSHIP SUMMIT</p><p>BENIN CITY, EDO STATE · 2026</p><a className="footer-credit" href="https://mreseosa.com" target="_blank" rel="noreferrer">Built by Mreseosa</a></div></div></footer>;
 }
