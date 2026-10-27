@@ -1,6 +1,7 @@
 ﻿"use client";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   useCallback,
@@ -106,8 +107,8 @@ export function PageFrame({ children }: { children: ReactNode }) {
     <div className="page-frame" data-menu-open={open}>
       <header className="site-header" inert={open}>
         <div className="container nav-inner">
-          <a
-            href="#top"
+          <Link
+            href="/"
             className="brand-link"
             aria-label="YELS 2026 — home"
           >
@@ -119,7 +120,7 @@ export function PageFrame({ children }: { children: ReactNode }) {
               height={60}
               priority
             />
-          </a>
+          </Link>
           <nav className="desktop-nav" aria-label="Main navigation">
             {navigation.map((item) => (
               <a key={item.href} href={item.href.startsWith("/") ? item.href : pathname === "/" ? item.href : `/${item.href}`}>
@@ -159,13 +160,15 @@ export function PageFrame({ children }: { children: ReactNode }) {
             transition={{ duration: reduced ? 0 : 0.5, ease }}
           >
             <div className="panel-heading">
-              <Image
-                className="header-logo"
-                src="/images/logo.png"
-                alt="YELS 2026"
-                width={150}
-                height={60}
-              />
+              <Link href="/" className="brand-link" aria-label="YELS 2026 — home">
+                <Image
+                  className="header-logo"
+                  src="/images/logo.png"
+                  alt="YELS 2026"
+                  width={150}
+                  height={60}
+                />
+              </Link>
               <button
                 className="panel-close"
                 aria-label="Close navigation"
