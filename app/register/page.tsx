@@ -12,7 +12,7 @@ export const metadata = {
 export default function RegisterPage() {
   return (
     <main id="main" className="registration-page" tabIndex={-1}>
-      <section className="registration-hero" aria-labelledby="registration-page-title">
+      <section className="registration-hero" aria-label="YELS 2026 registration">
         <Image
           src="/images/yels-hero.png"
           alt="YELS participant at a summit event"
@@ -23,18 +23,20 @@ export default function RegisterPage() {
         />
         <div className="registration-hero-overlay" />
         <div className="registration-hero-content">
-          <Link href="/" className="registration-home">
-            <span aria-hidden="true">←</span> YELS 2026
-          </Link>
+          <div className="registration-hero-bar"><p>YALI NETWORK <strong>EDO</strong></p><Link href="/" className="registration-home"><span aria-hidden="true">←</span> Back to summit</Link></div>
+        </div>
+      </section>
+      <div className="registration-hero-copy-wrap">
+        <div className="registration-hero-copy">
           <p className="eyebrow">REGISTRATION</p>
           <h1 id="registration-page-title">Be part of <em>YELS 2026.</em></h1>
-          <p>Join young leaders, professionals and changemakers for conversations and experiences shaping the future of work.</p>
+          <p>Join young leaders shaping the future of work.</p>
           <dl className="registration-hero-details">
             <div><dt>Date</dt><dd>{event.dateLabel}</dd></div>
             <div><dt>Location</dt><dd>{event.location}</dd></div>
           </dl>
         </div>
-      </section>
+      </div>
       <div className="registration-shell">
         <div className="registration-content">
           <aside className="registration-details" aria-label="YELS 2026 event information">
