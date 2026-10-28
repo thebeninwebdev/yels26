@@ -420,12 +420,27 @@ body:has(.yels-intro) .menu-toggle {
 .hero-organiser-logo {
   display: block;
   width: auto;
-  height: 108px;
+  height: 64px;
   max-width: 100%;
   object-fit: contain;
 }
 .hero-organiser-logo-yali {
-  height: 130px;
+  height: 77px;
+}
+@media (min-width: 1200px) {
+  .hero-text-row {
+    grid-template-columns: minmax(0, 1fr) 300px;
+  }
+  .hero-organiser-content {
+    gap: 14px;
+    padding: 14px 16px;
+  }
+  .hero-organiser-logo {
+    height: 90px;
+  }
+  .hero-organiser-logo-yali {
+    height: 108px;
+  }
 }
 .hero h1 {
   min-width: 0;
@@ -1477,6 +1492,12 @@ body:has(.yels-intro) .menu-toggle {
   }
 }
 @media (max-width: 1199px) {
+  .hero-organiser-logo {
+    height: 80px;
+  }
+  .hero-organiser-logo-yali {
+    height: 96px;
+  }
   .container {
     width: calc(100% - 72px);
   }
