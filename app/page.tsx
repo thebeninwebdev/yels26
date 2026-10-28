@@ -31,14 +31,14 @@ export default function Home() {
                   >
                     <Image
                       className="hero-organiser-logo"
-                      src="/us-diplomatic-mission-nigeria.png"
+                      src="/us-diplomatic-mission-nigeria.jpg"
                       alt="United States Diplomatic Mission in Nigeria"
                       width={119}
                       height={91}
                     />
                     <Image
                       className="hero-organiser-logo hero-organiser-logo-yali"
-                      src="/yali-network-edo.png"
+                      src="/yali-network-edo.jpg"
                       alt="YALI Network Edo"
                       width={135}
                       height={118}
@@ -90,8 +90,8 @@ export default function Home() {
           <div className="container">
             <div className="footer-top">
               <a href="https://www.instagram.com/yali_networkedo/" target="_blank" rel="noreferrer" className="footer-partner-logos" aria-label="Visit YALI Network Edo on Instagram">
-                <Image src="/us-diplomatic-mission-nigeria.png" alt="United States Diplomatic Mission in Nigeria" width={119} height={91} />
-                <Image src="/yali-network-edo.png" alt="YALI Network Edo" width={135} height={118} />
+                <Image src="/us-diplomatic-mission-nigeria.jpg" alt="United States Diplomatic Mission in Nigeria" width={119} height={91} />
+                <Image src="/yali-network-edo.jpg" alt="YALI Network Edo" width={135} height={118} />
               </a>
               <nav aria-label="Footer navigation">
                 {navigation.map((item) => <a href={item.href} key={item.href}>{item.label}</a>)}
