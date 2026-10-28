@@ -103,10 +103,10 @@ export const registrationSchema = z
 export type RegistrationValues = z.input<typeof registrationSchema>;
 
 export const defaultRegistrationValues: RegistrationValues = {
-  fullName: "", email: "", phone: "", ageRange: "18_24", gender: "prefer_not_to_say",
-  participantType: "student", participantTypeOther: "", organisation: "", roleOrCourse: "", state: "", cityOrLga: "",
-  interests: [], interestOther: "", expectedOutcomes: [], hasDisability: "prefer_not_to_say", accessibilitySupport: "",
-  heardAbout: "instagram", heardAboutOther: "", bootcampApplied: "no", bootcampReason: "",
+  fullName: "", email: "", phone: "", ageRange: "" as never, gender: "" as never,
+  participantType: "" as never, participantTypeOther: "", organisation: "", roleOrCourse: "", state: "", cityOrLga: "",
+  interests: [], interestOther: "", expectedOutcomes: [], hasDisability: "" as never, accessibilitySupport: "",
+  heardAbout: "" as never, heardAboutOther: "", bootcampApplied: "" as never, bootcampReason: "",
   bootcampPrimaryInterest: undefined, bootcampPrimaryInterestOther: "", bootcampCurrentWork: "", bootcampChallenge: "",
   previousProgramme: undefined, previousProgrammeDetails: "", availableBothDays: undefined, consent: false as true, marketingConsent: false,
 };
