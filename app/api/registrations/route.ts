@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { registrationSchema } from "@/app/register/schema";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Attendee } from "@/lib/models/attendee";
-import { generateRegistrationQr, sendRegistrationTicket } from "@/lib/email/send-registration-ticket";
+import { sendRegistrationReceived } from "@/lib/email/send-registration-received";
 
 function registrationId() {
   return `YELS26-${randomBytes(4).toString("hex").toUpperCase()}`;
@@ -50,41 +50,39 @@ export async function POST(request: Request) {
           }
         : undefined,
       registrationStatus: "registered",
+      selectionStatus: "pending",
       bootcampStatus: applyingForBootcamp ? "pending" : "not_applied",
       registrationId: id,
     });
 
-    let ticketEmailSent = false;
-    let qrCodeDataUrl: string | undefined;
+    let acknowledgementEmailSent = false;
     try {
-      const qr = await generateRegistrationQr(id);
-      qrCodeDataUrl = `data:image/png;base64,${qr.toString("base64")}`;
-      const ticket = await sendRegistrationTicket({ email, fullName: data.fullName, registrationId: id, bootcampApplied: applyingForBootcamp }, qr);
-      ticketEmailSent = true;
+      const acknowledgement = await sendRegistrationReceived({ email, fullName: data.fullName, bootcampApplied: applyingForBootcamp });
+      acknowledgementEmailSent = true;
       try {
         await Attendee.updateOne(
           { _id: attendee._id },
-          { $set: { "ticketEmail.status": "sent", "ticketEmail.sentAt": new Date(), "ticketEmail.resendEmailId": ticket.id } },
+          { $set: { "registrationEmail.status": "sent", "registrationEmail.sentAt": new Date(), "registrationEmail.resendEmailId": acknowledgement.id } },
         );
       } catch (trackingError) {
-        console.error("YELS ticket email status update failed", trackingError);
+        console.error("YELS registration acknowledgement status update failed", trackingError);
       }
     } catch (error) {
-      console.error("YELS ticket email failed", error);
+      console.error("YELS registration acknowledgement failed", error);
       const lastError = error instanceof Error && error.message === "YELS ticket email is not configured"
         ? error.message
-        : "Ticket delivery failed";
+        : "Registration acknowledgement delivery failed";
       try {
         await Attendee.updateOne(
           { _id: attendee._id },
-          { $set: { "ticketEmail.status": "failed", "ticketEmail.lastError": lastError } },
+          { $set: { "registrationEmail.status": "failed", "registrationEmail.lastError": lastError } },
         );
       } catch (trackingError) {
-        console.error("YELS ticket email failure update failed", trackingError);
+        console.error("YELS registration acknowledgement failure update failed", trackingError);
       }
     }
 
-    return NextResponse.json({ registrationId: id, fullName: data.fullName, bootcampApplied: applyingForBootcamp, ticketEmailSent, qrCodeDataUrl }, { status: 201 });
+    return NextResponse.json({ registrationId: id, fullName: data.fullName, bootcampApplied: applyingForBootcamp, acknowledgementEmailSent }, { status: 201 });
   } catch (error) {
     if ((error as { code?: number }).code === 11000) {
       return NextResponse.json(

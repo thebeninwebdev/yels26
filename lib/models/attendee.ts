@@ -24,6 +24,7 @@ const attendeeSchema = new Schema(
     hasDisability: { type: String, required: true }, accessibilitySupport: String, heardAbout: { type: String, required: true }, heardAboutOther: String,
     bootcampApplied: { type: Boolean, required: true }, bootcampApplication: bootcampApplicationSchema,
     registrationStatus: { type: String, enum: ["registered", "cancelled"], default: "registered" },
+    selectionStatus: { type: String, enum: ["pending", "selected", "not_selected"], default: "pending", required: true },
     bootcampStatus: { type: String, enum: ["not_applied", "pending", "approved", "rejected", "waitlisted"], required: true },
     bootcampDecision: {
       decidedAt: Date,
@@ -38,6 +39,12 @@ const attendeeSchema = new Schema(
     consent: { type: Boolean, required: true }, consentedAt: { type: Date, default: Date.now },
     marketingConsent: { type: Boolean, default: false }, registrationId: { type: String, required: true, unique: true },
     ticketEmail: {
+      status: { type: String, enum: ["pending", "sent", "failed"], default: "pending" },
+      sentAt: Date,
+      resendEmailId: String,
+      lastError: String,
+    },
+    registrationEmail: {
       status: { type: String, enum: ["pending", "sent", "failed"], default: "pending" },
       sentAt: Date,
       resendEmailId: String,
