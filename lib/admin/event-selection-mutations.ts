@@ -35,7 +35,7 @@ async function transaction<T>(work: (session: mongoose.ClientSession) => Promise
 
 async function lockedSettings(session: mongoose.ClientSession) {
   const settings = await ensureEventSettings({ session });
-  await EventSettings.updateOne({ _id: settings._id }, { $set: { selectionUpdatedAt: new Date() } }, { session });
+  await EventSettings.updateOne({ _id: settings._id }, { $set: { selectionUpdatedAt: new Date() }, $unset: { selectionEmailsCompletedAt: 1 } }, { session });
   if (settings.selectionFinalized) throw new EventSelectionError("Selections are finalized. Reopen selection before making changes.", 409, { code: "SELECTION_FINALIZED" });
   return settings;
 }
@@ -91,7 +91,7 @@ export async function setEventSelectionFinalized(input: { finalize: boolean; adm
     if (!input.finalize) {
       await EventSettings.updateOne(
         { _id: settings._id },
-        { $set: { selectionFinalized: false }, $unset: { selectionFinalizedAt: 1, selectionFinalizedBy: 1 } },
+        { $set: { selectionFinalized: false }, $unset: { selectionFinalizedAt: 1, selectionFinalizedBy: 1, selectionEmailsCompletedAt: 1 } },
         { session },
       );
       return { selectionFinalized: false };

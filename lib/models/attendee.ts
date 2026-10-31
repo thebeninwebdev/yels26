@@ -38,14 +38,22 @@ const attendeeSchema = new Schema(
       status: { type: String, enum: ["pending", "sent", "failed"], default: "pending" },
       sentAt: Date,
       resendEmailId: String,
+      outcome: { type: String, enum: ["approved", "rejected", "waitlisted"] },
+      idempotencyKey: String,
+      attempts: Number,
+      lastAttemptAt: Date,
       lastError: String,
     },
     consent: { type: Boolean, required: true }, consentedAt: { type: Date, default: Date.now },
     marketingConsent: { type: Boolean, default: false }, registrationId: { type: String, required: true, unique: true },
     ticketEmail: {
-      status: { type: String, enum: ["pending", "sent", "failed"], default: "pending" },
+      status: { type: String, enum: ["pending", "sending", "sent", "failed"], default: "pending" },
       sentAt: Date,
       resendEmailId: String,
+      attempts: Number,
+      lastAttemptAt: Date,
+      claimedAt: Date,
+      bootcampStatusIncluded: { type: String, enum: ["not_applied", "pending", "approved", "rejected", "waitlisted"] },
       lastError: String,
     },
     registrationEmail: {
@@ -62,6 +70,6 @@ const attendeeSchema = new Schema(
   { timestamps: true },
 );
 
-attendeeSchema.index({ registrationStatus: 1, selectionStatus: 1 });
+attendeeSchema.index({ registrationStatus: 1, selectionStatus: 1, "ticketEmail.status": 1 });
 
 export const Attendee = models.Attendee || model("Attendee", attendeeSchema);

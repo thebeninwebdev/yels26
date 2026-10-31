@@ -9,6 +9,7 @@ type SendRegistrationTicketInput = {
   fullName: string;
   registrationId: string;
   bootcampApplied: boolean;
+  bootcampStatus: "not_applied" | "pending" | "approved" | "rejected" | "waitlisted";
   selectionStatus: EventSelectionStatus;
 };
 
@@ -27,12 +28,17 @@ export async function sendRegistrationTicket(input: SendRegistrationTicketInput,
   const { data, error } = await client.emails.send({
     from,
     to: [input.email],
-    subject: `Your YELS 2026 Ticket — ${input.registrationId}`,
+    subject: "Congratulations — You’ve Been Selected for YELS 2026",
     html: registrationTicketHtml(input),
     text: registrationTicketText(input),
     attachments: [{ filename: `yels26-${input.registrationId}-qr.png`, content: qr, contentId: "yels-ticket-qr" }],
-  });
+  }, { idempotencyKey: `yels26-selected-ticket/${input.registrationId}` });
 
-  if (error) throw new Error(error.message || "Resend could not send the ticket email");
+  if (error) {
+    const failure = new Error(error.message || "Resend could not send the ticket email") as Error & { statusCode?: number };
+    failure.name = error.name;
+    failure.statusCode = error.statusCode ?? undefined;
+    throw failure;
+  }
   return { id: data?.id };
 }

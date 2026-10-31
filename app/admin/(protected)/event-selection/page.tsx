@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { buildEventSelectionQuery, parseEventSelectionFilters } from "@/lib/admin/event-selection";
 import { getEventSettings } from "@/lib/admin/event-settings";
+import { getEmailDeliverySummary, getEmailQuota } from "@/lib/admin/event-selection-emails";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Attendee } from "@/lib/models/attendee";
 import type { AttendeeRecord } from "../attendees/attendees-client";
@@ -17,7 +18,7 @@ export default async function EventSelectionPage({ searchParams }: { searchParam
   const query = buildEventSelectionQuery(filters);
   await connectToDatabase();
   const active = { registrationStatus: "registered" } as const;
-  const [count, applications, selected, waitlisted, pending, notSelected, settings, states] = await Promise.all([
+  const [count, applications, selected, waitlisted, pending, notSelected, settings, states, emailSummary, emailQuota] = await Promise.all([
     Attendee.countDocuments(query),
     Attendee.countDocuments(active),
     Attendee.countDocuments({ ...active, selectionStatus: "selected" }),
@@ -26,6 +27,8 @@ export default async function EventSelectionPage({ searchParams }: { searchParam
     Attendee.countDocuments({ ...active, selectionStatus: "not_selected" }),
     getEventSettings(),
     Attendee.distinct("state", active),
+    getEmailDeliverySummary(),
+    getEmailQuota(),
   ]);
   const pages = Math.max(1, Math.ceil(count / PAGE_SIZE));
   const page = Math.min(requestedPage, pages);
@@ -36,6 +39,8 @@ export default async function EventSelectionPage({ searchParams }: { searchParam
     stats={{ applications, selected, waitlisted, pending, notSelected }}
     capacity={settings.eventCapacity}
     selectionFinalized={settings.selectionFinalized}
+    emailSummary={emailSummary}
+    emailQuota={emailQuota}
     states={(states as string[]).filter(Boolean).sort()}
     count={count}
     page={page}

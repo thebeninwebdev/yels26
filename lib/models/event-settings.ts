@@ -8,6 +8,9 @@ const eventSettingsSchema = new Schema(
     selectionFinalizedAt: Date,
     selectionFinalizedBy: { type: Schema.Types.ObjectId, ref: "Admin" },
     selectionUpdatedAt: Date,
+    selectionEmailsStartedAt: Date,
+    selectionEmailsStartedBy: { type: Schema.Types.ObjectId, ref: "Admin" },
+    selectionEmailsCompletedAt: Date,
   },
   { timestamps: true },
 );

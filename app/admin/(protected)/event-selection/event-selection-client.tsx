@@ -4,10 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { EventSelectionFilters } from "@/lib/admin/event-selection";
 import type { EventSelectionStatus } from "@/lib/admin/event-selection-policy";
+import type { EmailDeliverySummary, EmailQuota } from "@/lib/admin/event-selection-emails";
 import { AttendeeDetails, type AttendeeRecord } from "../attendees/attendees-client";
+import { FinalEmailDelivery } from "./final-email-delivery";
 
 type Stats = { applications: number; selected: number; waitlisted: number; pending: number; notSelected: number };
-type Props = { applicants: AttendeeRecord[]; filters: EventSelectionFilters; stats: Stats; capacity: number; selectionFinalized: boolean; states: string[]; count: number; page: number; pages: number };
+type Props = { applicants: AttendeeRecord[]; filters: EventSelectionFilters; stats: Stats; capacity: number; selectionFinalized: boolean; emailSummary: EmailDeliverySummary; emailQuota: EmailQuota; states: string[]; count: number; page: number; pages: number };
 type Confirmation = { kind: "bulk"; status: EventSelectionStatus } | { kind: "approve-all" } | { kind: "finalize" } | { kind: "reopen" };
 const participantTypes = ["student", "recent_graduate", "young_professional", "entrepreneur", "private_sector", "government", "ngo", "other"];
 const bootcampStatuses = ["not_applied", "pending", "approved", "rejected", "waitlisted"];
@@ -64,6 +66,7 @@ export function EventSelectionClient(props: Props) {
     <ApplicantResults applicants={props.applicants} selected={selected} allPageSelected={allPageSelected} onToggle={toggle} onToggleAll={toggleAll} onReview={setDetails} />
     <footer className="attendee-pagination"><p>Showing {props.count ? (props.page - 1) * 25 + 1 : 0}–{Math.min(props.page * 25, props.count)} of {props.count.toLocaleString()}</p><nav><button disabled={props.page <= 1} onClick={() => navigate({ page: String(props.page - 1) })}>Previous</button><span>Page {props.page} of {props.pages}</span><button disabled={props.page >= props.pages} onClick={() => navigate({ page: String(props.page + 1) })}>Next</button></nav></footer>
     <SelectionSummary stats={props.stats} capacity={props.capacity} finalized={props.selectionFinalized} over={over} onAction={() => setConfirm({ kind: props.selectionFinalized ? "reopen" : "finalize" })} />
+    <FinalEmailDelivery selectionFinalized={props.selectionFinalized} initialSummary={props.emailSummary} initialQuota={props.emailQuota} />
     {filterOpen && <FilterPanel filters={props.filters} states={props.states} onClose={() => setFilterOpen(false)} onApply={(values) => { navigate({ ...values, status: values.status === "all" ? null : values.status, page: null }); setFilterOpen(false); }} />}
     {details && <AttendeeDetails attendee={details} selectionFinalized={props.selectionFinalized} onClose={() => setDetails(null)} onUpdated={(status) => { setDetails((current) => current ? { ...current, selectionStatus: status } : null); setNotice(`${details.fullName} marked ${label(status).toLowerCase()}.`); router.refresh(); }} />}
     {confirm && <ConfirmationDialog confirmation={confirm} count={confirm.kind === "bulk" ? selectedRecords.length : props.stats.pending} stats={props.stats} capacity={props.capacity} busy={busy} onCancel={() => setConfirm(null)} onConfirm={() => void execute()} />}
