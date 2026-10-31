@@ -17,7 +17,7 @@ const schema = z.object({
 
 type ExportAttendee = Record<string, unknown> & {
   fullName: string; email: string; phone: string; registrationId: string; participantType: string;
-  bootcampApplied: boolean; bootcampStatus: string; registrationStatus: string; createdAt: Date;
+  bootcampApplied: boolean; bootcampStatus: string; selectionStatus: string; registrationStatus: string; createdAt: Date;
   checkIn?: { status?: string; checkedInAt?: Date };
   ticketEmail?: { status?: string; sentAt?: Date };
   bootcampApplication?: Record<string, string>;
@@ -45,6 +45,7 @@ function columnsFor(groups: string[]): Column[] {
     { header: "State", key: "state", width: 18, value: (a) => text(a.state) },
     { header: "City / LGA", key: "cityOrLga", width: 20, value: (a) => text(a.cityOrLga) },
     { header: "Registration Status", key: "registrationStatus", width: 20, value: (a) => present(a.registrationStatus) },
+    { header: "Event Selection Status", key: "selectionStatus", width: 22, value: (a) => present(a.selectionStatus) },
     { header: "Registration Date", key: "createdAt", width: 22, value: (a) => new Date(a.createdAt) },
   );
   if (groups.includes("bootcamp")) columns.push(

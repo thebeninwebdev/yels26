@@ -77,7 +77,7 @@ export const registrationSchema = z
     previousProgrammeDetails: z.string().trim().max(500).optional().or(z.literal("")),
     availableBothDays: z.enum(["yes", "no"]).optional(),
     consent: z.literal(true, {
-      errorMap: () => ({ message: "Please confirm your consent to continue." }),
+      error: "Please confirm your consent to continue.",
     }),
     marketingConsent: z.boolean().default(false),
   })

@@ -2,12 +2,14 @@ import "server-only";
 import QRCode from "qrcode";
 import { getResend } from "./resend";
 import { registrationTicketHtml, registrationTicketText } from "./templates/registration-ticket";
+import type { EventSelectionStatus } from "@/lib/admin/event-selection-policy";
 
 type SendRegistrationTicketInput = {
   email: string;
   fullName: string;
   registrationId: string;
   bootcampApplied: boolean;
+  selectionStatus: EventSelectionStatus;
 };
 
 export async function generateRegistrationQr(registrationId: string) {
@@ -20,6 +22,7 @@ export async function generateRegistrationQr(registrationId: string) {
 }
 
 export async function sendRegistrationTicket(input: SendRegistrationTicketInput, qr: Buffer) {
+  if (input.selectionStatus !== "selected") throw new Error("Event tickets can only be sent to selected participants");
   const { client, from } = getResend();
   const { data, error } = await client.emails.send({
     from,

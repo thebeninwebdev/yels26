@@ -24,7 +24,11 @@ const attendeeSchema = new Schema(
     hasDisability: { type: String, required: true }, accessibilitySupport: String, heardAbout: { type: String, required: true }, heardAboutOther: String,
     bootcampApplied: { type: Boolean, required: true }, bootcampApplication: bootcampApplicationSchema,
     registrationStatus: { type: String, enum: ["registered", "cancelled"], default: "registered" },
-    selectionStatus: { type: String, enum: ["pending", "selected", "not_selected"], default: "pending", required: true },
+    selectionStatus: { type: String, enum: ["pending", "selected", "waitlisted", "not_selected"], default: "pending", required: true },
+    selectionDecision: {
+      decidedAt: Date,
+      decidedBy: { type: Schema.Types.ObjectId, ref: "Admin" },
+    },
     bootcampStatus: { type: String, enum: ["not_applied", "pending", "approved", "rejected", "waitlisted"], required: true },
     bootcampDecision: {
       decidedAt: Date,
@@ -57,5 +61,7 @@ const attendeeSchema = new Schema(
   },
   { timestamps: true },
 );
+
+attendeeSchema.index({ registrationStatus: 1, selectionStatus: 1 });
 
 export const Attendee = models.Attendee || model("Attendee", attendeeSchema);

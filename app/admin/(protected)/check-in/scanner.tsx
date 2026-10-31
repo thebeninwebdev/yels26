@@ -13,6 +13,7 @@ type ScannerState =
   | "checking-in"
   | "checked-in"
   | "already-checked-in"
+  | "not-selected"
   | "invalid"
   | "camera-error"
   | "network-error";
@@ -21,6 +22,7 @@ type Attendee = {
   fullName: string;
   registrationId: string;
   participantType: string;
+  selectionStatus: string;
   bootcampApplied: boolean;
   bootcampStatus: string;
   checkedInAt?: string;
@@ -93,10 +95,12 @@ export function CheckInScanner({ initialCheckedIn, total, recent }: { initialChe
         setAttendee(data.attendee);
         setState("already-checked-in");
       } else {
-        setState("invalid");
+        setState(data.code === "NOT_SELECTED_FOR_EVENT" ? "not-selected" : "invalid");
         setMessage(data.code === "REGISTRATION_CANCELLED"
           ? "This registration has been cancelled."
-          : "This QR code does not match a valid YELS 2026 registration.");
+          : data.code === "NOT_SELECTED_FOR_EVENT"
+            ? "Registration found, but this participant was not selected for the event."
+            : "This QR code does not match a valid YELS 2026 registration.");
       }
     } catch {
       setState("network-error");
@@ -161,8 +165,8 @@ export function CheckInScanner({ initialCheckedIn, total, recent }: { initialChe
         setAttendee(data.attendee);
         setState("already-checked-in");
       } else {
-        setMessage("We couldn’t complete check-in. Please try again.");
-        setState("network-error");
+        setMessage(data.code === "NOT_SELECTED_FOR_EVENT" ? "This participant was not selected for the event." : "We couldn’t complete check-in. Please try again.");
+        setState(data.code === "NOT_SELECTED_FOR_EVENT" ? "not-selected" : "network-error");
       }
     } catch {
       setMessage("We couldn’t complete check-in. Check your connection and try again.");
@@ -202,7 +206,7 @@ export function CheckInScanner({ initialCheckedIn, total, recent }: { initialChe
           <AnimatePresence mode="wait">{resultVisible && <motion.div className={styles.resultWrap} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
             <Result
               icon={state === "checked-in" || state === "attendee-found" ? "✓" : state === "already-checked-in" ? "!" : "×"}
-              title={state === "attendee-found" ? "Attendee found" : state === "checked-in" ? "Checked in" : state === "already-checked-in" ? "Already checked in" : state === "invalid" ? "Ticket not recognised" : "Check-in unavailable"}
+              title={state === "attendee-found" ? "Attendee found" : state === "checked-in" ? "Checked in" : state === "already-checked-in" ? "Already checked in" : state === "not-selected" ? "Not selected for event" : state === "invalid" ? "Ticket not recognised" : "Check-in unavailable"}
               copy={state === "checked-in" && attendee ? `${attendee.fullName} checked in at ${clock(attendee.checkedInAt)}.` : state === "already-checked-in" && attendee ? `${attendee.fullName} was checked in at ${clock(attendee.checkedInAt)}.` : message}
               attendee={attendee}
               action={state === "attendee-found" ? "Check in attendee" : state === "checked-in" ? "Scan next attendee" : state === "invalid" ? "Try again" : "Scan another ticket"}
@@ -243,6 +247,7 @@ function Result({ icon, title, copy, attendee, action, onAction, busy, secondary
     {attendee && <div className={styles.attendee}><strong>{attendee.fullName}</strong><dl>
       <div><dt>Registration</dt><dd>{attendee.registrationId}</dd></div>
       <div><dt>Type</dt><dd>{attendee.participantType}</dd></div>
+      <div><dt>Event</dt><dd>{attendee.selectionStatus.replaceAll("_", " ")}</dd></div>
       <div><dt>Bootcamp</dt><dd>{attendee.bootcampApplied ? attendee.bootcampStatus.replaceAll("_", " ") : "Not applied"}</dd></div>
       {attendee.checkedInAt && <div><dt>Check-in</dt><dd>{new Date(attendee.checkedInAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</dd></div>}
     </dl></div>}

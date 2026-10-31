@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import type { AttendeeFilters, AttendeeView } from "@/lib/admin/attendees";
+import type { EventSelectionStatus } from "@/lib/admin/event-selection-policy";
 
 export type AttendeeRecord = {
   _id: string; fullName: string; email: string; phone: string; registrationId: string;
@@ -10,15 +12,16 @@ export type AttendeeRecord = {
   organisation?: string; roleOrCourse?: string; state: string; cityOrLga: string;
   interests: string[]; interestOther?: string; expectedOutcomes: string[];
   hasDisability: string; accessibilitySupport?: string; heardAbout: string; heardAboutOther?: string;
-  bootcampApplied: boolean; bootcampStatus: string; registrationStatus: string;
+  bootcampApplied: boolean; bootcampStatus: "not_applied" | "pending" | "approved" | "rejected" | "waitlisted"; registrationStatus: string;
+  selectionStatus: EventSelectionStatus;
   bootcampApplication?: { reason?: string; primaryInterest?: string; primaryInterestOther?: string; currentWork?: string; challenge?: string; previousProgramme?: string; previousProgrammeDetails?: string; availableBothDays?: string };
   ticketEmail?: { status?: string; sentAt?: string };
   checkIn?: { status?: string; checkedInAt?: string };
   consent: boolean; consentedAt?: string; marketingConsent: boolean; createdAt: string;
 };
 
-type Stats = { total: number; checkedIn: number; notCheckedIn: number; applicants: number; selected: number };
-type Props = { attendees: AttendeeRecord[]; filters: AttendeeFilters; stats: Stats; count: number; page: number; pages: number };
+type Stats = { total: number; checkedIn: number; notCheckedIn: number; yelsSelected: number; applicants: number; bootcampSelected: number };
+type Props = { attendees: AttendeeRecord[]; filters: AttendeeFilters; stats: Stats; selectionFinalized: boolean; count: number; page: number; pages: number };
 const participantTypes = ["student", "recent_graduate", "young_professional", "entrepreneur", "private_sector", "government", "ngo", "other"];
 const bootcampStatuses = ["not_applied", "pending", "approved", "rejected", "waitlisted"];
 const labels: Record<string, string> = { all: "All", checked_in: "Checked in", not_checked_in: "Not checked in", bootcamp_applicants: "Bootcamp applicants", bootcamp_selected: "Bootcamp selected", not_applied: "Not applied", pending: "Applicant", approved: "Selected", rejected: "Not selected", waitlisted: "Waitlisted", recent_graduate: "Recent Graduate", young_professional: "Young Professional", private_sector: "Private Sector", government: "Government / Public Sector", ngo: "NGO / Civil Society", prefer_not_to_say: "Prefer not to say", career_development: "Career Development", community_development: "Community Development", future_of_work: "Future of Work", practical_leadership_skills: "Practical leadership skills", career_business_opportunities: "Career, business and future-of-work opportunities", build_connections: "Build connections", grow_my_initiative: "Grow my initiative", inspiration_from_leaders: "Inspiration from leaders" };
@@ -48,31 +51,31 @@ export function AttendeesClient(props: Props) {
     <Pagination count={props.count} page={props.page} pages={props.pages} onPage={(page) => navigate({ page: page === 1 ? null : String(page) })} />
     <button className="attendee-mobile-download" onClick={() => setExportOpen(true)}>↓ Download attendees</button>
     {filterOpen && <FilterPanel filters={props.filters} onClose={() => setFilterOpen(false)} onApply={(values) => { navigate({ participantType: values.participantType || null, bootcampStatus: values.bootcampStatus || null, checkIn: values.checkIn || null, from: values.from || null, to: values.to || null, page: null }); setFilterOpen(false); }} />}
-    {details && <AttendeeDetails attendee={details} onClose={() => setDetails(null)} />}
+    {details && <AttendeeDetails attendee={details} selectionFinalized={props.selectionFinalized} onClose={() => setDetails(null)} onUpdated={(status) => { setDetails((current) => current ? { ...current, selectionStatus: status } : null); router.refresh(); }} />}
     {exportOpen && <ExportDialog filters={props.filters} selected={[...selected]} onClose={() => setExportOpen(false)} />}
   </section>;
 }
 
 function StatsGrid({ stats }: { stats: Stats }) {
-  const cards = [["registered", "Total registered", stats.total], ["checked", "Checked in", stats.checkedIn], ["applicants", "Bootcamp applicants", stats.applicants], ["selected", "Bootcamp selected", stats.selected]] as const;
+  const cards = [["registered", "Registrations", stats.total], ["event", "YELS selected", stats.yelsSelected], ["checked", "Checked in", stats.checkedIn], ["applicants", "Bootcamp applicants", stats.applicants], ["selected", "Bootcamp selected", stats.bootcampSelected]] as const;
   return <section className="attendee-stats" aria-label="Attendee summary">{cards.map(([kind, title, value]) => <article key={kind} className={`attendee-stat stat-${kind}`}><span aria-hidden="true">{kind === "registered" ? "◎" : kind === "checked" ? "✓" : kind === "applicants" ? "◇" : "★"}</span><div><strong>{value.toLocaleString()}</strong><small>{title}</small></div></article>)}</section>;
 }
 
 function Tabs({ stats, active, onChange }: { stats: Stats; active: AttendeeView; onChange: (view: AttendeeView) => void }) {
-  const tabs: [AttendeeView, string, number][] = [["all", "All", stats.total], ["checked_in", "Checked in", stats.checkedIn], ["not_checked_in", "Not checked in", stats.notCheckedIn], ["bootcamp_applicants", "Bootcamp applicants", stats.applicants], ["bootcamp_selected", "Bootcamp selected", stats.selected]];
+  const tabs: [AttendeeView, string, number][] = [["all", "All", stats.total], ["checked_in", "Checked in", stats.checkedIn], ["not_checked_in", "Not checked in", stats.notCheckedIn], ["bootcamp_applicants", "Bootcamp applicants", stats.applicants], ["bootcamp_selected", "Bootcamp selected", stats.bootcampSelected]];
   return <nav className="attendee-tabs" aria-label="Attendee status views">{tabs.map(([value, title, count]) => <button key={value} className={active === value ? "active" : ""} onClick={() => onChange(value)} aria-pressed={active === value}>{title} <span>({count.toLocaleString()})</span></button>)}</nav>;
 }
 
 function AttendeeResults({ attendees, selected, allPageSelected, onToggle, onToggleAll, onOpen }: { attendees: AttendeeRecord[]; selected: Set<string>; allPageSelected: boolean; onToggle: (id: string) => void; onToggleAll: () => void; onOpen: (attendee: AttendeeRecord) => void }) {
   if (!attendees.length) return <div className="attendee-empty"><span>⌕</span><h2>No attendees found</h2><p>Try changing your search or filters.</p></div>;
   return <section className="attendee-results">
-    <div className="attendee-table-wrap"><table className="attendee-table"><thead><tr><th><input type="checkbox" checked={allPageSelected} onChange={onToggleAll} aria-label="Select all attendees on this page" /></th><th>Attendee</th><th>Email</th><th>Type</th><th>Bootcamp</th><th>Check-in</th><th>Registered</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>{attendees.map((attendee) => <tr key={attendee._id} onClick={() => onOpen(attendee)}><td onClick={(event) => event.stopPropagation()}><input type="checkbox" checked={selected.has(attendee._id)} onChange={() => onToggle(attendee._id)} aria-label={`Select ${attendee.fullName}`} /></td><td><AttendeeIdentity attendee={attendee} /></td><td>{attendee.email}</td><td><Badge value={attendee.participantType} kind="type" /></td><td><Badge value={attendee.bootcampStatus} kind="bootcamp" /></td><td><Badge value={attendee.checkIn?.status ?? "not_checked_in"} kind="checkin" /></td><td>{dateTime(attendee.createdAt)}</td><td><button className="attendee-more" aria-label={`View ${attendee.fullName}`}>•••</button></td></tr>)}</tbody></table></div>
-    <div className="attendee-mobile-list">{attendees.map((attendee) => <button key={attendee._id} onClick={() => onOpen(attendee)}><AttendeeIdentity attendee={attendee} /><span className="attendee-mobile-badges"><Badge value={attendee.participantType} kind="type" /><Badge value={attendee.bootcampStatus} kind="bootcamp" /></span><i aria-hidden="true">›</i></button>)}</div>
+    <div className="attendee-table-wrap"><table className="attendee-table"><thead><tr><th><input type="checkbox" checked={allPageSelected} onChange={onToggleAll} aria-label="Select all attendees on this page" /></th><th>Attendee</th><th>Email</th><th>Type</th><th>Event Status</th><th>Bootcamp</th><th>Check-in</th><th>Registered</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>{attendees.map((attendee) => <tr key={attendee._id} onClick={() => onOpen(attendee)}><td onClick={(event) => event.stopPropagation()}><input type="checkbox" checked={selected.has(attendee._id)} onChange={() => onToggle(attendee._id)} aria-label={`Select ${attendee.fullName}`} /></td><td><AttendeeIdentity attendee={attendee} /></td><td>{attendee.email}</td><td><Badge value={attendee.participantType} kind="type" /></td><td><Badge value={attendee.selectionStatus ?? "pending"} kind="event" /></td><td><Badge value={attendee.bootcampStatus} kind="bootcamp" /></td><td><Badge value={attendee.checkIn?.status ?? "not_checked_in"} kind="checkin" /></td><td>{dateTime(attendee.createdAt)}</td><td><button className="attendee-more" aria-label={`View ${attendee.fullName}`}>•••</button></td></tr>)}</tbody></table></div>
+    <div className="attendee-mobile-list">{attendees.map((attendee) => <button key={attendee._id} onClick={() => onOpen(attendee)}><AttendeeIdentity attendee={attendee} /><span className="attendee-mobile-badges"><Badge value={attendee.participantType} kind="type" /><Badge value={attendee.selectionStatus ?? "pending"} kind="event" /><Badge value={attendee.bootcampStatus} kind="bootcamp" /></span><i aria-hidden="true">›</i></button>)}</div>
   </section>;
 }
 
 function AttendeeIdentity({ attendee }: { attendee: AttendeeRecord }) { return <div className="attendee-identity"><span>{initials(attendee.fullName)}</span><div><b>{attendee.fullName}</b><small>{attendee.email}</small></div></div>; }
-function Badge({ value, kind }: { value: string; kind: string }) { return <span className={`attendee-badge badge-${kind} badge-${value}`}>{kind === "checkin" && <i aria-hidden="true">{value === "checked_in" ? "✓" : "○"}</i>}{label(value)}</span>; }
+function Badge({ value, kind }: { value: string; kind: string }) { return <span className={`attendee-badge badge-${kind} badge-${value}`}>{kind === "checkin" && <i aria-hidden="true">{value === "checked_in" ? "✓" : "○"}</i>}{kind === "event" && value === "pending" ? "Pending" : label(value)}</span>; }
 
 function Pagination({ count, page, pages, onPage }: { count: number; page: number; pages: number; onPage: (page: number) => void }) {
   const from = count ? (page - 1) * 25 + 1 : 0; const to = Math.min(page * 25, count);
@@ -84,9 +87,13 @@ function FilterPanel({ filters, onClose, onApply }: { filters: AttendeeFilters; 
   return <Modal title="Filter attendees" onClose={onClose} className="attendee-filter-dialog"><div className="attendee-filter-grid"><label>Attendee type<select value={values.participantType} onChange={(event) => set("participantType", event.target.value)}><option value="">All types</option>{participantTypes.map((value) => <option value={value} key={value}>{label(value)}</option>)}</select></label><label>Bootcamp status<select value={values.bootcampStatus} onChange={(event) => set("bootcampStatus", event.target.value)}><option value="">All bootcamp statuses</option>{bootcampStatuses.map((value) => <option value={value} key={value}>{label(value)}</option>)}</select></label><label>Check-in status<select value={values.checkIn} onChange={(event) => set("checkIn", event.target.value)}><option value="">All check-in statuses</option><option value="checked_in">Checked in</option><option value="not_checked_in">Not checked in</option></select></label><fieldset><legend>Registration date</legend><div><label>From<input type="date" value={values.from} onChange={(event) => set("from", event.target.value)} /></label><label>To<input type="date" value={values.to} onChange={(event) => set("to", event.target.value)} /></label></div></fieldset></div><footer><button onClick={() => setValues({ ...values, participantType: "", bootcampStatus: "", checkIn: "", from: "", to: "" })}>Reset</button><button className="primary" onClick={() => onApply(values)}>Apply filters</button></footer></Modal>;
 }
 
-function AttendeeDetails({ attendee, onClose }: { attendee: AttendeeRecord; onClose: () => void }) {
+export function AttendeeDetails({ attendee, selectionFinalized, onClose, onUpdated }: { attendee: AttendeeRecord; selectionFinalized: boolean; onClose: () => void; onUpdated: (status: EventSelectionStatus) => void }) {
+  const [pendingStatus, setPendingStatus] = useState<EventSelectionStatus | null>(null); const [busy, setBusy] = useState(false); const [decisionError, setDecisionError] = useState("");
   const fields = (items: [string, string | boolean | undefined | null][]) => <dl className="attendee-review-data">{items.map(([name, value]) => <div key={name}><dt>{name}</dt><dd>{label(value)}</dd></div>)}</dl>;
   const checkInStatus = attendee.checkIn?.status ?? "not_checked_in";
+  const eventStatus = attendee.selectionStatus ?? "pending";
+  const eventLabel = (status: EventSelectionStatus) => status === "pending" ? "Pending" : label(status);
+  const decide = async () => { if (!pendingStatus) return; setBusy(true); setDecisionError(""); try { const response = await fetch(`/api/admin/event-selection/${attendee._id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: pendingStatus }) }); const result = await response.json(); if (!response.ok) throw new Error(result.error || "Event admission could not be updated."); onUpdated(pendingStatus); setPendingStatus(null); } catch (reason) { setDecisionError(reason instanceof Error ? reason.message : "Event admission could not be updated."); } finally { setBusy(false); } };
   return <div className="attendee-dialog-backdrop attendee-review-backdrop" onMouseDown={onClose}>
     <article className="attendee-review" role="dialog" aria-modal="true" aria-labelledby="attendee-detail-title" onMouseDown={(event) => event.stopPropagation()}>
       <header className="attendee-review-mobile-bar"><button onClick={onClose} aria-label="Back to attendees">←</button><strong>Attendee Details</strong><button onClick={onClose} aria-label="Close attendee details">×</button></header>
@@ -101,21 +108,23 @@ function AttendeeDetails({ attendee, onClose }: { attendee: AttendeeRecord; onCl
           <div className="attendee-review-summary">
             <SummaryCard title="Age range" value={label(attendee.ageRange)} />
             <SummaryCard title="Participant type" value={label(attendee.participantType)} />
-            <SummaryCard title="Bootcamp" value={label(attendee.bootcampStatus)} />
+            <SummaryCard title="Event admission" value={eventLabel(eventStatus)} />
             <SummaryCard title="Registered" value={dateTime(attendee.createdAt)} />
           </div>
         </header>
-        <nav className="attendee-review-nav" aria-label="Attendee detail sections"><a href="#attendee-personal">Personal</a><a href="#attendee-profile">Profile</a><a href="#attendee-interests">YELS interests</a><a href="#attendee-bootcamp">Bootcamp</a><a href="#attendee-accessibility">Accessibility</a><a href="#attendee-registration">Registration</a></nav>
+        <nav className="attendee-review-nav" aria-label="Attendee detail sections"><a href="#attendee-event-admission">Event admission</a><a href="#attendee-personal">Personal</a><a href="#attendee-profile">Profile</a><a href="#attendee-interests">YELS interests</a><a href="#attendee-bootcamp">Bootcamp</a><a href="#attendee-accessibility">Accessibility</a><a href="#attendee-registration">Registration</a></nav>
         <div className="attendee-review-content">
+          <section id="attendee-event-admission" className="attendee-review-section attendee-review-section-wide attendee-event-admission"><div><p className="admin-context">EVENT ADMISSION</p><h3>Status</h3><Badge value={eventStatus} kind="event" />{selectionFinalized && <small>Selections are finalized. Reopen them from Event Selection to make changes.</small>}{decisionError && <p className="attendee-decision-error">{decisionError}</p>}</div><div className="attendee-event-actions"><button onClick={() => setPendingStatus("not_selected")} disabled={selectionFinalized || busy}>Not Selected</button><button onClick={() => setPendingStatus("waitlisted")} disabled={selectionFinalized || busy}>Waitlist</button><button className="primary" onClick={() => setPendingStatus("selected")} disabled={selectionFinalized || busy}>{eventStatus === "selected" ? "Selected for YELS" : "Approve for YELS"}</button></div></section>
           <DetailGroup id="attendee-personal" title="Personal information">{fields([["Full name", attendee.fullName], ["Email", attendee.email], ["Phone", attendee.phone], ["Registration ID", attendee.registrationId], ["Age range", attendee.ageRange], ["Gender", attendee.gender]])}</DetailGroup>
           <DetailGroup id="attendee-profile" title="Attendee information">{fields([["Attendee type", attendee.participantType], ["Other attendee type", attendee.participantTypeOther], ["Organisation", attendee.organisation], ["Role / course", attendee.roleOrCourse], ["State", attendee.state], ["City / LGA", attendee.cityOrLga]])}</DetailGroup>
           <DetailGroup id="attendee-interests" title="YELS interests">{fields([["Interests", attendee.interests.map(label).join(", ")], ["Other interest", attendee.interestOther], ["Expected outcomes", attendee.expectedOutcomes.map(label).join(", ")], ["Heard about YELS", attendee.heardAbout], ["Other source", attendee.heardAboutOther]])}</DetailGroup>
-          <DetailGroup id="attendee-bootcamp" title="Bootcamp" wide>{fields([["Applied", attendee.bootcampApplied], ["Application status", attendee.bootcampStatus], ["Primary interest", attendee.bootcampApplication?.primaryInterest], ["Other primary interest", attendee.bootcampApplication?.primaryInterestOther], ["Motivation", attendee.bootcampApplication?.reason], ["Current work / initiative", attendee.bootcampApplication?.currentWork], ["Challenge", attendee.bootcampApplication?.challenge], ["Previous programme", attendee.bootcampApplication?.previousProgramme], ["Programme details", attendee.bootcampApplication?.previousProgrammeDetails], ["Available both days", attendee.bootcampApplication?.availableBothDays]])}</DetailGroup>
+          <DetailGroup id="attendee-bootcamp" title="Bootcamp application" wide>{fields([["Applied", attendee.bootcampApplied], ["Application status", attendee.bootcampStatus], ["Primary interest", attendee.bootcampApplication?.primaryInterest], ["Other primary interest", attendee.bootcampApplication?.primaryInterestOther], ["Motivation", attendee.bootcampApplication?.reason], ["Current work / initiative", attendee.bootcampApplication?.currentWork], ["Challenge", attendee.bootcampApplication?.challenge], ["Previous programme", attendee.bootcampApplication?.previousProgramme], ["Programme details", attendee.bootcampApplication?.previousProgrammeDetails], ["Available both days", attendee.bootcampApplication?.availableBothDays]])}{attendee.bootcampApplied && <p className="attendee-bootcamp-link">Manage this application separately from event admission. <Link href="/admin/bootcamp">View Bootcamp applications →</Link></p>}</DetailGroup>
           <DetailGroup id="attendee-accessibility" title="Accessibility">{fields([["Person with disability", attendee.hasDisability], ["Support requested", attendee.accessibilitySupport]])}</DetailGroup>
           <DetailGroup id="attendee-registration" title="Check-in and registration">{fields([["Check-in status", checkInStatus], ["Check-in time", attendee.checkIn?.checkedInAt ? dateTime(attendee.checkIn.checkedInAt) : "—"], ["Registration status", attendee.registrationStatus], ["Registered", dateTime(attendee.createdAt)], ["Ticket email", attendee.ticketEmail?.status], ["Marketing consent", attendee.marketingConsent]])}</DetailGroup>
         </div>
       </main>
     </article>
+    {pendingStatus && <div className="event-confirm-backdrop"><section className="event-confirm" role="dialog" aria-modal="true" aria-labelledby="attendee-event-confirm-title"><h2 id="attendee-event-confirm-title">{pendingStatus === "selected" ? `Approve ${attendee.fullName} for YELS 2026?` : pendingStatus === "waitlisted" ? `Waitlist ${attendee.fullName}?` : `Mark ${attendee.fullName} as Not Selected?`}</h2><p>Their event admission status will change to <strong>{eventLabel(pendingStatus)}</strong>.</p><p className="event-independence-note">Their Bootcamp status will not change.</p>{decisionError && <p className="attendee-decision-error" role="alert">{decisionError}</p>}<footer><button onClick={() => setPendingStatus(null)} disabled={busy}>Cancel</button><button className="primary" onClick={() => void decide()} disabled={busy}>{busy ? "Saving…" : "Confirm decision"}</button></footer></section></div>}
   </div>;
 }
 function SummaryCard({ title, value }: { title: string; value: string }) { return <div className="attendee-review-summary-card"><small>{title}</small><strong>{value}</strong></div>; }
