@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { clearAdminSession } from "@/lib/admin/auth";
 export async function POST(request: Request) {
-  await clearAdminSession();
-  return NextResponse.redirect(new URL("/admin/login", request.url), 303);
+  const response = await fetch(new URL("/api/auth/sign-out", request.url), { method: "POST", headers: request.headers });
+  return NextResponse.redirect(new URL("/admin/login", request.url), { status: 303, headers: response.headers });
 }

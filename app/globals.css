@@ -414,7 +414,7 @@ body:has(.yels-intro) .menu-toggle {
   padding: 20px 24px;
   border: 1px solid rgba(226, 232, 240, .9);
   border-radius: 8px;
-  background: rgba(255, 255, 255, .96);
+  background: white;
   box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
 }
 .hero-organiser-logo {

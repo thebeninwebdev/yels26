@@ -1,5 +1,9 @@
 import "../admin.css";
+import "./bootcamp/bootcamp-dialog.css";
+import "./bootcamp/bootcamp-showcase.css";
+import "./bootcamp/bootcamp-page.css";
 import "../attendees.css";
+import "./attendees/attendee-review.css";
 import "../attendees-loading.css";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin/auth";
