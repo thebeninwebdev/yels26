@@ -86,6 +86,7 @@ export default function Home() {
           </section>
           <FinalCTA />
         </main>
+        
         <footer className="site-footer">
           <div className="container">
             <div className="footer-top">

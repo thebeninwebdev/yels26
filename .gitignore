@@ -34,6 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# local credentials and password notes
+/public/passwords.tsx
+
 # vercel
 .vercel
 
